@@ -1,4 +1,4 @@
-package Game;
+package app.src.main.Game;
 
 public class Ship{
     private int size, startx, starty;

@@ -1,4 +1,4 @@
-package Game;
+package app.src.main.Game;
 import java.util.ArrayList;
 
 public class Ocean{
@@ -44,7 +44,7 @@ public class Ocean{
         
     }
     Boats.add(size);
-    
+
 }
                 
     public void PlaceBoats(int row, int col, Boolean orientation){
