@@ -1,8 +1,8 @@
 package Game;
 
-public class Battleship{
-    protected int size, startx, starty;
-    private Boolean isVertical, hit;
+public class Ship{
+    private int size, startx, starty;
+    private Boolean isVertical, isAHit;
     private int[] spotsX, spotsY;
     //initialize ship position
     private void setXY(int x, int y){startx = x; starty = y;}
@@ -40,7 +40,7 @@ public class Battleship{
         if(vert == true){isVertical = true;}
         else{isVertical = false;}
     }
-    //overide the createBoat to allow different kinds of input
+    //overload the createBoat to allow different kinds of input
     public void createBoat(int x, int y, Boolean vertical, int s){setXY(x,y); setDirection(vertical); setSize(s); 
         spotsX = new int[size];
         spotsY = new int[size];
@@ -70,6 +70,27 @@ public class Battleship{
     public int getX(){return startx;}
     public int getY(){return starty;}
     //hit tracking
-
-
+    public Boolean isHit(int x, int y){
+        hit(x,y);
+        return isAHit;
+    }
+    public void hit(int x, int y){
+        // if the x and y coordinates fall on the boat
+        Boolean hitX = false;
+        Boolean hitY = false;
+        // the value of the position on the boat that is hit. Ie: 1st, 2nd, 3rd
+        int shotX = 0;
+        int shotY = 0;
+        for(int i = 0; i < spotsX.length; i++){
+            if(x == spotsX[i]){hitX = true; shotX = i;}
+        }
+        for(int i = 0; i < spotsY.length; i++){
+            if(y == spotsY[i]){hitY = true; shotY = i;}
+        }
+        if(hitX && hitY){
+            spotsX[shotX] = -1;
+            spotsY[shotY] = -1;
+            isAHit = true;
+        }
+    }
 }
