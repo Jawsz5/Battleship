@@ -5,6 +5,30 @@ public class Ship{
     private Boolean isVertical, isAHit;
     private int[] spotsX, spotsY;
     //initialize ship position
+     //overload the constructor to allow different kinds of input
+     public Ship(int x, int y, Boolean vertical, int s){setXY(x,y); setDirection(vertical); setSize(s); 
+        spotsX = new int[size];
+        spotsY = new int[size];
+        for(int i = 0; i < spotsX.length; i++){
+            if(isVertical){
+                spotsX[i] = x;
+                spotsY[i] = y + i;
+            } else{
+                spotsX[i] = x + i;
+                spotsY[i] = y;
+            }
+        }
+    }
+    public Ship(int x, int y, String vertical, int s){
+        setDirection(vertical);setSize(s); new Ship(x, y, isVertical, size);
+    }
+    public Ship(int x, int y, Boolean vertical, String s){
+        setDirection(vertical);setSize(s); new Ship(x, y, isVertical, size);
+    }
+    public Ship(int x, int y, String vertical, String s){
+        setDirection(vertical);setSize(s); new Ship(x, y, isVertical, size);
+    }
+
     private void setXY(int x, int y){startx = x; starty = y;}
     //2 methods for direction and size setting for simplicity later on
     private void setSize(int s){size = s;}
@@ -39,29 +63,6 @@ public class Ship{
     private void setDirection(Boolean vert){
         if(vert == true){isVertical = true;}
         else{isVertical = false;}
-    }
-    //overload the createBoat to allow different kinds of input
-    public void createBoat(int x, int y, Boolean vertical, int s){setXY(x,y); setDirection(vertical); setSize(s); 
-        spotsX = new int[size];
-        spotsY = new int[size];
-        for(int i = 0; i < spotsX.length; i++){
-            if(isVertical){
-                spotsX[i] = x;
-                spotsY[i] = y + i;
-            } else{
-                spotsX[i] = x + i;
-                spotsY[i] = y;
-            }
-        }
-    }
-    public void createBoat(int x, int y, String vertical, int s){
-        setDirection(vertical);setSize(size);createBoat(x, y, isVertical, size);
-    }
-    public void createBoat(int x, int y, Boolean vertical, String s){
-        setDirection(vertical);setSize(size);createBoat(x, y, isVertical, size);
-    }
-    public void createBoat(int x, int y, String vertical, String s){
-        setDirection(vertical);setSize(size);createBoat(x, y, isVertical, size);
     }
 
     //get methods

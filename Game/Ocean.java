@@ -26,11 +26,11 @@ public class Ocean{
 
         }
     }
-    public addBoats(int row, int col, Boolean orientation, String size)throws Exception{
-        createBoat(row, col, orientation, size);
-        int[] boatSpotx = getSpotsX();
-        int[] boatSpoty = getSpotsY();
-        for(int i = 0 i < boatSpotx.length; i++){
+    public void addBoats(int row, int col, Boolean orientation, String size) throws Exception{
+        Ship s = new Ship(row, col, orientation, size);
+        int[] boatSpotx = s.getSpotsX();
+        int[] boatSpoty = s.getSpotsY();
+        for(int i = 0; i < boatSpotx.length; i++){
             if(boatSpotx[i] < row && boatSpoty[i] < col && boatSpotx[i] >= 0 && boatSpoty[i] >= 0){
                 if(grid[boatSpotx[i]][boatSpoty[i]] == 0){
                     grid[boatSpotx[i]][boatSpoty[i]] = 1; // Mark the boat's position
