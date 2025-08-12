@@ -3,14 +3,12 @@ package Game;
 public class Battleship{
     protected int size, startx, starty;
     private Boolean isVertical, hit;
-    protected int[] spots;
+    private int[] spotsX, spotsY;
     //initialize ship position
-    public void setX(int x){startx = x;}
-    public void setY(int y){starty = y;}
-    public void setXY(int x, int y){startx = x; starty = y;}
+    private void setXY(int x, int y){startx = x; starty = y;}
     //2 methods for direction and size setting for simplicity later on
-    public void setSize(int s){size = s;}
-    public void setSize(String s){
+    private void setSize(int s){size = s;}
+    private void setSize(String s){
         s = s.toLowerCase().strip();
         String[][] sizes = new String[][]{
             {"aircraft", "aircraftcarrier", "a", "air"}, //due to strip function, aircraft carrier is one word
@@ -28,7 +26,7 @@ public class Battleship{
         int[] size_map = new int[]{5, 4, 3, 3, 2};
         size = size_map[size];
     }
-    public void setDirection(String vert){
+    private void setDirection(String vert){
         vert = vert.toLowerCase().strip();
         String[] possible_vert_strings = new String[]{"vertical", "v", "vert"};
         for(String i: possible_vert_strings){
@@ -38,16 +36,40 @@ public class Battleship{
         }
         isVertical = false;
     }
-    public void setDirection(Boolean vert){
+    private void setDirection(Boolean vert){
         if(vert == true){isVertical = true;}
         else{isVertical = false;}
     }
-    public void createBoat(int x, int y, Boolean vertical, int size){}
-    public void createBoat(int x, int y, String vertical, int size){}
-    public void createBoat(int x, int y, Boolean Vertical, String size){}
-    public void createBoat(int x, int y, String vertical, String size){}
+    //overide the createBoat to allow different kinds of input
+    public void createBoat(int x, int y, Boolean vertical, int s){setXY(x,y); setDirection(vertical); setSize(s); 
+        spotsX = new int[size];
+        spotsY = new int[size];
+        for(int i = 0; i < spotsX.length; i++){
+            if(isVertical){
+                spotsX[i] = x;
+                spotsY[i] = y + i;
+            } else{
+                spotsX[i] = x + i;
+                spotsY[i] = y;
+            }
+        }
+    }
+    public void createBoat(int x, int y, String vertical, int s){
+        setDirection(vertical);setSize(size);createBoat(x, y, isVertical, size);
+    }
+    public void createBoat(int x, int y, Boolean vertical, String s){
+        setDirection(vertical);setSize(size);createBoat(x, y, isVertical, size);
+    }
+    public void createBoat(int x, int y, String vertical, String s){
+        setDirection(vertical);setSize(size);createBoat(x, y, isVertical, size);
+    }
 
-
+    //get methods
+    public int[] getSpotsX(){return spotsX;}
+    public int[] getSpotsY(){return spotsY;}
+    public int getX(){return startx;}
+    public int getY(){return starty;}
     //hit tracking
+
 
 }

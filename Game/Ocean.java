@@ -5,7 +5,7 @@ public class Ocean{
     protected int col;
     protected int[][] grid;
 
-    public Ocena(int row, int col)throws Exception {
+    public Ocean(int row, int col)throws Exception {
         if(row <= 0 || col <= 0) {
             throw new Exception("Row and column must be greater than zero.");
         }
