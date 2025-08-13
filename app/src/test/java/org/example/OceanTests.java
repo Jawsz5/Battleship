@@ -1,7 +1,9 @@
-package app.src.main.Game;
+package app.src.test.java.org.example;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import app.src.main.Game.Ocean;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -28,14 +28,14 @@ public class Ship{
         try{setSize(s);}catch(IllegalArgumentException | IOException e){
             System.out.println("size of the boat must be an integer or valid string. If the input isn't a valid string, check the IO exception");
         }
-        new Ship(x, y, isVertical, size);
+        populateSpots(size, x, y);
     }
     public Ship(int x, int y, String vertical, String s){
         setDirection(vertical);
         try{setSize(s);}catch(IllegalArgumentException | IOException e){
             System.out.println("size of the boat must be an integer or valid string. If the input isn't a valid string, check the IO exception");
         }
-        new Ship(x, y, isVertical, size);
+        populateSpots(size, x, y);
     }
 
     private void populateSpots(int size, int x, int y){

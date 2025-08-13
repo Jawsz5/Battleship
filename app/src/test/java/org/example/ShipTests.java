@@ -71,14 +71,6 @@ public class ShipTests {
     }
 
     @Test
-    @DisplayName("String+String ctor: also leaves spots arrays null due to temporary construction")
-    void stringStringCtorLeavesArraysNull() {
-        Ship s = new Ship(4, 4, "v", "submarine");
-        assertNull(s.getSpotsX());
-        assertNull(s.getSpotsY());
-    }
-
-    @Test
     @DisplayName("hit(): multiple hits can mark multiple indices independently")
     void multipleHits() {
         Ship s = new Ship(10, 10, false, 4); // (10,10),(11,10),(12,10),(13,10)
