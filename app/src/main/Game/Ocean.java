@@ -7,16 +7,16 @@ public class Ocean{
     protected int[][] grid;
     private ArrayList<String> Boats = new ArrayList<>();
 
-    public Ocean(int row, int col)throws Exception {
-        if(row <= 0 || col <= 0) {
-            throw new Exception("Row and column must be greater than zero.");
+    public Ocean(int rowcol)throws Exception {
+        if(rowcol <= 0) {
+            throw new IllegalArgumentException("Row and column must be greater than zero.");
         }
-        else if(row > 20 || col > 20){
-            throw new Exception("Row and column must be less than or equal to 20.");
+        else if(rowcol > 20){
+            throw new IllegalArgumentException("Row and column must be less than or equal to 20.");
         }
         else{
-            this.row = row;
-            this.col = col;
+            row = rowcol;
+            col = rowcol;
             grid = new int[row][col];
             for(int i = 0; i < row; i++) {
                 for(int j = 0; j < col; j++) {
@@ -35,11 +35,11 @@ public class Ocean{
                 if(grid[boatSpotx[i]][boatSpoty[i]] == 0){
                     grid[boatSpotx[i]][boatSpoty[i]] = 1; // Mark the boat's position
                 }else {
-                    throw new Exception("Boat overlaps with another boat or is out of bounds.");
+                    throw new IllegalArgumentException("Boat overlaps with another boat or is out of bounds.");
                 }
 
             }else{
-                throw new Exception("Boat is out of bounds.");
+                throw new IllegalArgumentException("Boat is out of bounds.");
             }
         
     }
