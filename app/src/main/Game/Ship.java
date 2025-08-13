@@ -9,27 +9,19 @@ public class Ship{
     //initialize ship position
      //overload the constructor to allow different kinds of input
      public Ship(int x, int y, Boolean vertical, int s){
-        try{setXY(x,y);}catch(IllegalArgumentException e){System.out.println("coordinates of the boat must be integers");}
+        try{this.setXY(x,y);}catch(IllegalArgumentException e){System.out.println("coordinates of the boat must be integers");}
         try{setDirection(vertical);}catch(IllegalArgumentException e){
             System.out.println("direction of the boat must be either a boolean or string");
         }
         try{setSize(s);}catch(IllegalArgumentException e){
             System.out.println("size of the boat must be an integer or valid string");
         }
-        spotsX = new int[size];
-        spotsY = new int[size];
-        for(int i = 0; i < spotsX.length; i++){
-            if(isVertical){
-                spotsX[i] = x;
-                spotsY[i] = y + i;
-            } else{
-                spotsX[i] = x + i;
-                spotsY[i] = y;
-            }
-        }
+        populateSpots(size, x, y);
     }
     public Ship(int x, int y, String vertical, int s){
-        setDirection(vertical);setSize(s); new Ship(x, y, isVertical, size);
+        try{setDirection(vertical);}catch(IllegalArgumentException e){System.out.println("direction of the boat must be either a boolean or string");}
+        try{setSize(s);}catch(IllegalArgumentException e){System.out.println("size of the boat must be an integer or valid string");}
+        populateSpots(size, x, y);
     }
     public Ship(int x, int y, Boolean vertical, String s){
         setDirection(vertical); 
@@ -44,6 +36,20 @@ public class Ship{
             System.out.println("size of the boat must be an integer or valid string. If the input isn't a valid string, check the IO exception");
         }
         new Ship(x, y, isVertical, size);
+    }
+
+    private void populateSpots(int size, int x, int y){
+        spotsX = new int[size];
+        spotsY = new int[size];
+        for(int i = 0; i < spotsX.length; i++){
+            if(isVertical){
+                spotsX[i] = x;
+                spotsY[i] = y + i;
+            } else{
+                spotsX[i] = x + i;
+                spotsY[i] = y;
+            }
+        }
     }
 
     private void setXY(int x, int y)throws IllegalArgumentException{
