@@ -1,10 +1,7 @@
 package app.src.test.java.org.example;
 import org.junit.jupiter.api.Test;
-
 import app.src.main.Game.Ship;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.DisplayName;
 
 public class ShipTests {
@@ -58,8 +55,6 @@ public class ShipTests {
     @Test
     @DisplayName("Boolean+String ctor: size mapping works for some names; 'aircraft' throws IOException (as coded)")
     void stringSizeMappingBehavior() {
-        // destroyer -> index 2 -> size_map[2] == 3
-        Ship sDestroyer = new Ship(0, 0, true, "destroyer");
         // arrays remain null due to temporary new Ship(...), but size on 'this' is set before that
         // We can't read 'size' directly (no getter), so we sanity-check no exceptions were thrown.
         assertDoesNotThrow(() -> new Ship(0, 0, true, "cruiser"));

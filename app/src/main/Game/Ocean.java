@@ -2,9 +2,9 @@ package app.src.main.Game;
 import java.util.ArrayList;
 
 public class Ocean{
-    protected int row;
-    protected int col;
-    protected int[][] grid;
+    private int row;
+    private int col;
+    private int[][] grid;
     private ArrayList<String> Boats = new ArrayList<>();
 
     public Ocean(int rowcol)throws Exception {
@@ -57,4 +57,6 @@ public class Ocean{
 
         }
     }
+    public int[][] getGrid(){return grid;}
+    public ArrayList<String> getBoats(){return Boats;}
 }
