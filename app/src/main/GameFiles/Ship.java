@@ -50,7 +50,7 @@ public class Ship{
     }
     private void setSize(String s) throws IllegalArgumentException, IOException{
         if (!(s instanceof String)){
-            throw new IllegalArgumentException("size of the boat must be either an integer or valid string");
+            throw new IllegalArgumentException("size of the boat must a valid string");
         }
         s = s.toLowerCase().strip();
         String[][] sizes = new String[][]{
@@ -66,7 +66,7 @@ public class Ship{
                 if(m.equals(s)){selectBoat = i;} 
             }
         }
-        if(selectBoat == 10){throw new IOException("size input is not contained in the string list not is it a valid integer");}
+        if(selectBoat == 10){throw new IOException("size input is not contained in the string list not is it a valid String");}
         //map the position in the sizes array to actual ship size
         char[] type_map = new char[]{'a', 'b', 'd', 'c', 's'};
         int[] size_map = new int[]{5, 4, 3, 3, 2};

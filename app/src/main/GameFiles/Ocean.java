@@ -5,7 +5,7 @@ public class Ocean{
     private int dimension;
     private char[][] grid;
     private ArrayList<Ship> Boats = new ArrayList<Ship>();
-    private String[] boatNames = new String[]{"aircraft carrier", "battleship", "destroyer", "cruiser", "submarine"};
+    private String[] boatNames = new String[]{"aircraftcarrier", "battleship", "destroyer", "cruiser", "submarine"};
 
     public Ocean(int dim)throws Exception {
         dimension = dim;
@@ -26,15 +26,16 @@ public class Ocean{
         int[] boatSpotX = s.getSpotsX();
         int[] boatSpotY = s.getSpotsY();
         int boatLength = boatSpotX.length;
-        if(x < 0 || y < 0 || boatSpotX[boatLength - 1] > dimension || boatSpotY[boatLength - 1] > dimension){ //check if boat is out of bounds
+        if(x < 0 || y < 0 || boatSpotX[boatLength - 1] >= dimension || boatSpotY[boatLength - 1] >= dimension){ //check if boat is out of bounds
             throw new IllegalArgumentException("Boat is out of bounds.");
         }
         for(int i = 0; i < boatLength; i++){ //check if boat overlaps with another boat
-            if(grid[boatSpotX[i]][boatSpotY[i]] == 0){
-                grid[boatSpotX[i]][boatSpotY[i]] = s.getBoatType(); //using boatType instead of 1 in order to make the ocean more descriptive
-            } else{
+            if(grid[boatSpotX[i]][boatSpotY[i]] != 'e'){
                 throw new IllegalArgumentException("Boat overlaps with another boat");
             }
+        }
+        for(int i = 0; i < boatLength; i ++){
+            grid[boatSpotX[i]][boatSpotY[i]] = s.getBoatType();
         }
         Boats.add(s);
     }
@@ -52,19 +53,20 @@ public class Ocean{
     public void placeRandomBoats(){
         int boatsPlaced = 0;
         do{
-            int x = (int) Math.random() * dimension;
-            int y = (int) Math.random() * dimension;
+            //System.out.println(boatsPlaced);
+            int x = (int) (Math.random() * dimension);
+            int y = (int) (Math.random() * dimension);
             Boolean direction = Math.random() < 0.5;
             String size = boatNames[boatsPlaced];
             try{
                 addBoats(x, y, direction, size);
+                boatsPlaced += 1;
             } catch(Exception e){}
-            boatsPlaced += 1;
         }while(boatsPlaced != 5);
     }
     public Boolean isHit(int x, int y){
         //checks to see if a boat is on a sqaure
-        if(grid[x][y] != 0){
+        if(grid[x][y] != 'e'){
             return true;
         }
         return false;
