@@ -45,7 +45,7 @@ class OceanTests{
         // As implemented, addBoats(row,col,...) compares boat spots to those same params (< row, < col).
         // With small params like (1,1), any multi-cell ship will throw "Boat is out of bounds."
         IllegalArgumentException ex =
-                assertThrows(IllegalArgumentException.class, () -> o.addBoats(1, 1, true, "destroyer"));
+                assertThrows(IllegalArgumentException.class, () -> o.addBoats(10, 10, true, "destroyer"));
         assertTrue(ex.getMessage().toLowerCase().contains("out of bounds"));
     }
 
@@ -74,7 +74,7 @@ class OceanTests{
 
         // Call PlaceBoats; with an empty Boats list, Boats.get(i) throws inside the loop,
         // which is caught and only logs "Error placing boat".
-        o.PlaceBoats(1, 1, true);
+        o.placeBoats(1, 1, true);
 
         int[][] after = o.getGrid();
         assertSame(before, after, "Grid instance should be the same");

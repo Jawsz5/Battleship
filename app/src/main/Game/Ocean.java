@@ -4,7 +4,8 @@ import java.util.ArrayList;
 public class Ocean{
     private int dimension;
     private int[][] grid;
-    private ArrayList<String> Boats = new ArrayList<>();
+    private ArrayList<String> Boats = new ArrayList<String>();
+    private String[] boatNames = new String[]{"aircraft carrier", "battleship", "destroyer", "cruiser", "submarine"};
 
     public Ocean(int dim)throws Exception {
         dimension = dim;
@@ -25,10 +26,10 @@ public class Ocean{
         int[] boatSpotX = s.getSpotsX();
         int[] boatSpotY = s.getSpotsY();
         int boatLength = boatSpotX.length;
-        if(x < 0 || y < 0 || boatSpotX[boatLength - 1] > dimension || boatSpotY[boatLength - 1] > dimension){
+        if(x < 0 || y < 0 || boatSpotX[boatLength - 1] > dimension || boatSpotY[boatLength - 1] > dimension){ //check if boat is out of bounds
             throw new IllegalArgumentException("Boat is out of bounds.");
         }
-        for(int i = 0; i < boatLength; i++){
+        for(int i = 0; i < boatLength; i++){ //check if boat overlaps with another boat
             if(grid[boatSpotX[i]][boatSpotY[i]] == 0){
                 grid[boatSpotX[i]][boatSpotY[i]] = 1;
             } else{
@@ -38,7 +39,7 @@ public class Ocean{
         Boats.add(size);
     }
                 
-    public void PlaceBoats(int row, int col, Boolean orientation){
+    public void placeBoats(int row, int col, Boolean orientation){
         for(int i = 0; i < 5; i++){
             try {
                 addBoats(row, col, orientation, Boats.get(i));
@@ -47,6 +48,23 @@ public class Ocean{
             }
 
         }
+    }
+    public void placeRandomBoats(){
+        int boatsPlaced = 0;
+        do{
+            int x = (int) Math.random() * dimension;
+            int y = (int) Math.random() * dimension;
+            Boolean direction;
+            double randDir = Math.random();
+            if(randDir >= 0.5){
+                direction = true; //vertical
+            } else{direction = false;}
+            String size = boatNames[boatsPlaced];
+            try{
+                addBoats(x, y, direction, size);
+            } catch(Exception e){}
+            boatsPlaced += 1;
+        }while(boatsPlaced != 5);
     }
     public int[][] getGrid(){return grid;}
     public ArrayList<String> getBoats(){return Boats;}
