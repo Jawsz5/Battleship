@@ -71,6 +71,14 @@ public class Ocean{
         }
         return false;
     }
+    public Boolean isAllSunk(){
+        for(Ship ship : Boats){
+            if(!ship.isSunk()){
+                return false; //if any ship is not sunk, return false
+            }
+        }
+        return true;
+    }
 
     public char[][] getGrid(){return grid;}
     public ArrayList<Ship> getBoats(){return Boats;}
