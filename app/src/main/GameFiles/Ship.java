@@ -130,4 +130,17 @@ public class Ship{
         }
         else{isAHit = false;}
     }
+    public boolean isSunk(){
+        for(int i: spotsX){
+            if(i != -1){
+                return false;
+            }
+        }
+        for(int i: spotsY){ //redundant but safe approach
+            if(i != -1){
+                return false;
+            }
+        }
+        return true;
+    }
 }
