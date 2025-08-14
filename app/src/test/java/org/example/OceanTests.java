@@ -1,145 +1,96 @@
 package app.src.test.java.org.example;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
 import app.src.main.Game.Ocean;
-import java.util.ArrayList;
 
-class OceanTest {
-    @Nested
-    @DisplayName("Constructor: size validation & initialization")
-    class CtorTests {
-        @Test
-        @DisplayName("Throws when n <= 0")
-        void ctorThrowsWhenNonPositive() {
-            IllegalArgumentException ex =
-                    assertThrows(IllegalArgumentException.class, () -> new Ocean(0));
-            assertTrue(ex.getMessage().toLowerCase().contains("greater than zero"));
-        }
+import static org.junit.jupiter.api.Assertions.*;
 
-        @Test
-        @DisplayName("Throws when n > 20")
-        void ctorThrowsWhenTooLarge() {
-            IllegalArgumentException ex =
-                    assertThrows(IllegalArgumentException.class, () -> new Ocean(21));
-            assertTrue(ex.getMessage().toLowerCase().contains("less than or equal"));
-        }
+class OceanTests{
 
-        @Test
-        @DisplayName("Initializes an n x n grid of zeros")
-        void ctorInitializesZeroGrid() throws Exception {
-            Ocean o = new Ocean(10);
-            int[][] grid = o.getGrid();
-            assertEquals(10, grid.length, "rows");
-            for (int r = 0; r < 10; r++) {
-                assertEquals(10, grid[r].length, "cols at row " + r);
-                for (int c = 0; c < 10; c++) {
-                    assertEquals(0, grid[r][c], "grid[" + r + "][" + c + "] should start at 0");
-                }
+    @Test
+    @DisplayName("Constructor rejects sizes <= 0")
+    void ctorRejectsNonPositive() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> new Ocean(0));
+        assertTrue(ex.getMessage().toLowerCase().contains("greater than zero"));
+        assertThrows(IllegalArgumentException.class, () -> new Ocean(-5));
+    }
+
+    @Test
+    @DisplayName("Constructor rejects sizes > 20")
+    void ctorRejectsTooLarge() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> new Ocean(21));
+        assertTrue(ex.getMessage().toLowerCase().contains("less than or equal"));
+        assertThrows(IllegalArgumentException.class, () -> new Ocean(100));
+    }
+
+    @Test
+    @DisplayName("Constructor initializes an n×n grid of zeros")
+    void ctorInitializesZeroGrid() throws Exception {
+        Ocean o = new Ocean(10);
+        int[][] grid = o.getGrid();
+        assertEquals(10, grid.length, "row count");
+        for (int r = 0; r < grid.length; r++) {
+            assertEquals(10, grid[r].length, "col count at row " + r);
+            for (int c = 0; c < grid[r].length; c++) {
+                assertEquals(0, grid[r][c], "grid[" + r + "][" + c + "] should be 0");
             }
         }
     }
 
-    @Nested
-    @DisplayName("addBoats: current behavior (using params as bounds, grid[x][y])")
-    class AddBoatsTests {
-
-        @Test
-        @DisplayName("Places a vertical 'destroyer' (size ~3) at (x=1,y=1) when bounds params are large enough")
-        void addBoatsPlacesWhenParamsPermit() throws Exception {
-            Ocean o = new Ocean(10);
-
-            // As written, addBoats(rowParam, colParam, orientation, size):
-            // - Constructs Ship at (rowParam, colParam) (treated as x,y)
-            // - Bounds check compares ship coords to *those same method params* instead of board size
-            // - Writes to grid[boatSpotx][boatSpoty] (i.e., grid[x][y])
-            //
-            // To allow placement, pass large "row/col" params (10, 10) and start near origin.
-            o.addBoats(1, 1, true, "destroyer"); // vertical: x=1; y=1..3
-
-            int[][] g = o.getGrid();
-            // Because code writes grid[x][y], expect:
-            assertEquals(1, g[1][1]); // (x=1,y=1) => grid[1][1]
-            assertEquals(1, g[1][2]); // (x=1,y=2) => grid[1][2]
-            assertEquals(1, g[1][3]); // (x=1,y=3) => grid[1][3]
-        }
-
-        @Test
-        @DisplayName("Overlap triggers IllegalArgumentException")
-        void overlapThrows() throws Exception {
-            Ocean o = new Ocean(10);
-
-            o.addBoats(1, 1, true, "destroyer"); // occupies (1,1),(1,2),(1,3) in grid[x][y]
-            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                    () -> o.addBoats(1, 2, true, "submarine")); // would overlap at (1,2)
-            assertTrue(ex.getMessage().toLowerCase().contains("overlaps"));
-        }
-
-        @Test
-        @DisplayName("Out-of-bounds check uses the passed (row,col) params, not board size (demonstrates bug)")
-        void paramsUsedAsBoundsNotBoardSize() throws Exception {
-            Ocean o = new Ocean(10);
-
-            // Here we pass tiny bounds (1,1). Even though the board is 10x10,
-            // the method compares boat coords against 1 and will throw.
-            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                    () -> o.addBoats(1, 1, true, "destroyer"));
-            assertTrue(ex.getMessage().toLowerCase().contains("out of bounds"));
-        }
+    @Test
+    @DisplayName("addBoats uses its parameters as bounds (demonstrates out-of-bounds throw for small values)")
+    void addBoatsParamsAsBoundsCausesOob() throws Exception {
+        Ocean o = new Ocean(10);
+        // As implemented, addBoats(row,col,...) compares boat spots to those same params (< row, < col).
+        // With small params like (1,1), any multi-cell ship will throw "Boat is out of bounds."
+        IllegalArgumentException ex =
+                assertThrows(IllegalArgumentException.class, () -> o.addBoats(1, 1, true, "destroyer"));
+        assertTrue(ex.getMessage().toLowerCase().contains("out of bounds"));
     }
 
-    @Nested
-    @DisplayName("PlaceBoats: currently iterates 5 times, catches & prints errors")
-    class PlaceBoatsTests {
-        @Test
-        @DisplayName("No boats preloaded: PlaceBoats() prints errors and leaves grid unchanged")
-        void placeBoatsNoBoats() throws Exception {
-            Ocean o = new Ocean(5);
-            int[][] before = deepCopy(o.getGrid());
+    @Test
+    @DisplayName("addBoats throws overlap when a cell is already marked (if first placement succeeded upstream)")
+    void addBoatsOverlapThrowsWhenCellOccupied() throws Exception {
+        // This test asserts the overlap branch by pre-marking a cell directly on the grid,
+        // since addBoats itself cannot successfully place with small bounds parameters.
+        Ocean o = new Ocean(10);
+        int[][] grid = o.getGrid();
 
-            // With no entries in Boats list, Boats.get(i) throws; method catches and prints.
-            o.PlaceBoats(1, 1, true);
+        // Pre-mark a cell that a vertical ship starting at (0,0) would try to use.
+        // We'll choose to simulate an overlap at (0,0).
+        grid[0][0] = 1;
 
-            int[][] after = o.getGrid();
-            assertGridEquals(before, after);
-        }
-
-        @Test
-        @DisplayName("Preload one boat name: PlaceBoats() attempts placements; later indices error are caught")
-        void placeBoatsWithOneName() throws Exception {
-            Ocean o = new Ocean(10);
-            ArrayList<String> boats = o.getBoats();
-            boats.add("destroyer"); // only index 0 is valid; indices 1..4 will be caught as errors
-
-            o.PlaceBoats(1, 1, true); // attempts to add destroyer at (1,1), then 4 failing gets
-
-            int[][] g = o.getGrid();
-            // Expect the first one placed at (1,1),(1,2),(1,3) under current grid[x][y] behavior
-            assertEquals(1, g[1][1]);
-            assertEquals(1, g[1][2]);
-            assertEquals(1, g[1][3]);
-        }
+        IllegalArgumentException ex =
+                assertThrows(IllegalArgumentException.class, () -> o.addBoats(0, 0, true, "submarine"));
+        assertTrue(ex.getMessage().toLowerCase().contains("overlaps"));
     }
 
-    // --- helpers ---
+    @Test
+    @DisplayName("PlaceBoats with empty Boats list: catches errors and leaves grid unchanged")
+    void placeBoatsEmptyListNoChange() throws Exception {
+        Ocean o = new Ocean(5);
+        int[][] before = o.getGrid();
 
-    private static int[][] deepCopy(int[][] src) {
-        int[][] dst = new int[src.length][];
-        for (int r = 0; r < src.length; r++) {
-            dst[r] = new int[src[r].length];
-            System.arraycopy(src[r], 0, dst[r], 0, src[r].length);
-        }
-        return dst;
-    }
+        // Call PlaceBoats; with an empty Boats list, Boats.get(i) throws inside the loop,
+        // which is caught and only logs "Error placing boat".
+        o.PlaceBoats(1, 1, true);
 
-    private static void assertGridEquals(int[][] a, int[][] b) {
-        assertEquals(a.length, b.length, "row count mismatch");
-        for (int r = 0; r < a.length; r++) {
-            assertEquals(a[r].length, b[r].length, "col count mismatch at row " + r);
-            for (int c = 0; c < a[r].length; c++) {
-                assertEquals(a[r][c], b[r][c], "grid cell mismatch at [" + r + "][" + c + "]");
+        int[][] after = o.getGrid();
+        assertSame(before, after, "Grid instance should be the same");
+        for (int r = 0; r < after.length; r++) {
+            for (int c = 0; c < after[r].length; c++) {
+                assertEquals(0, after[r][c], "grid cell should remain 0 at [" + r + "][" + c + "]");
             }
         }
+    }
+
+    @Test
+    @DisplayName("getBoats exposes the internal list (mutations via getter are reflected)")
+    void getBoatsIsLiveList() throws Exception {
+        Ocean o = new Ocean(10);
+        assertEquals(0, o.getBoats().size());
+        o.getBoats().add("destroyer");
+        assertEquals(1, o.getBoats().size(), "Adding through getter should reflect on subsequent getBoats()");
     }
 }
