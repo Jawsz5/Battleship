@@ -2,7 +2,7 @@ package app.src.test.java.org.example;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import app.src.main.Game.Ocean;
+import app.src.main.GameFiles.Ocean;
 
 import static org.junit.jupiter.api.Assertions.*;
 

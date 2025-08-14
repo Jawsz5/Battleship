@@ -1,4 +1,4 @@
-package app.src.main.Game;
+package app.src.main.GameFiles;
 
 import java.io.IOException;
 

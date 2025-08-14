@@ -1,6 +1,8 @@
 package app.src.test.java.org.example;
 import org.junit.jupiter.api.Test;
-import app.src.main.Game.Ship;
+
+import app.src.main.GameFiles.Ship;
+
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 

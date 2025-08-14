@@ -1,4 +1,4 @@
-package app.src.main.Game;
+package app.src.main.GameFiles;
 import java.util.ArrayList;
 
 public class Ocean{
@@ -38,11 +38,11 @@ public class Ocean{
         }
         Boats.add(size);
     }
-                
+    //MOURYA this isn't manual or random. wtf does this do
     public void placeBoats(int row, int col, Boolean orientation){
         for(int i = 0; i < 5; i++){
             try {
-                addBoats(row, col, orientation, Boats.get(i));
+                addBoats(row, col, orientation, boatNames[i]);
             } catch (Exception e) {
                 System.out.println("Error placing boat");
             }
@@ -54,11 +54,7 @@ public class Ocean{
         do{
             int x = (int) Math.random() * dimension;
             int y = (int) Math.random() * dimension;
-            Boolean direction;
-            double randDir = Math.random();
-            if(randDir >= 0.5){
-                direction = true; //vertical
-            } else{direction = false;}
+            Boolean direction = Math.random() < 0.5;
             String size = boatNames[boatsPlaced];
             try{
                 addBoats(x, y, direction, size);
