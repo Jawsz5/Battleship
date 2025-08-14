@@ -11,18 +11,19 @@ public class Ship{
     //initialize ship position
      //overload the constructor to allow different kinds of input
      public Ship(int x, int y, Boolean vertical, String s){
-        try{this.setXY(x,y);}catch(IllegalArgumentException e){System.out.println("coordinates of the boat must be integers");}
+        this.setXY(x,y);
         try{setDirection(vertical);}catch(IllegalArgumentException e){
             System.out.println(e);
         }
-        try{setSize(s);}catch(IllegalArgumentException | IOException e){
+        try{setSize(s);}catch(IllegalArgumentException e){
             System.out.println(e);
         }
         populateSpots(boatSize, x, y);
     }
     public Ship(int x, int y, String vertical, String s){
+        this.setXY(x,y);
         setDirection(vertical);
-        try{setSize(s);}catch(IllegalArgumentException | IOException e){
+        try{setSize(s);}catch(IllegalArgumentException e){
             System.out.println(e);
         }
         populateSpots(boatSize, x, y);
@@ -43,14 +44,11 @@ public class Ship{
     }
 
     private void setXY(int x, int y)throws IllegalArgumentException{
-        if(x != (int)x){
-            throw new IllegalArgumentException("coordinates of the boat must be integers");
-        }
         startx = x; starty = y;
     }
-    private void setSize(String s) throws IllegalArgumentException, IOException{
-        if (!(s instanceof String)){
-            throw new IllegalArgumentException("size of the boat must a valid string");
+    private void setSize(String s) throws IllegalArgumentException{
+        if (s == null){
+            throw new IllegalArgumentException("size of the boat can't be null");
         }
         s = s.toLowerCase().strip();
         String[][] sizes = new String[][]{
@@ -66,7 +64,7 @@ public class Ship{
                 if(m.equals(s)){selectBoat = i;} 
             }
         }
-        if(selectBoat == 10){throw new IOException("size input is not contained in the string list not is it a valid String");}
+        if(selectBoat == 10){throw new IllegalArgumentException("size input is not contained in the string list not is it a valid String");}
         //map the position in the sizes array to actual ship size
         char[] type_map = new char[]{'a', 'b', 'd', 'c', 's'};
         int[] size_map = new int[]{5, 4, 3, 3, 2};
@@ -75,21 +73,21 @@ public class Ship{
     }
     //2 methods for direction setting for simplicity later on
     private void setDirection(String vert) throws IllegalArgumentException{
-        if (!(vert instanceof String)){
-            throw new IllegalArgumentException("direction of the boat must be either a boolean or string");
+        if (vert == null){
+            throw new IllegalArgumentException("direction of the boat can't be null");
         }
         vert = vert.toLowerCase().strip();
         String[] possible_vert_strings = new String[]{"vertical", "v", "vert"};
+        isVertical = false;
         for(String i: possible_vert_strings){
             if (i.equals(vert)){
                 isVertical = true;
             }
         }
-        isVertical = false;
     }
     private void setDirection(Boolean vert) throws IllegalArgumentException{
         if (!(vert instanceof Boolean)){
-            throw new IllegalArgumentException("direction of the boat must be either a boolean or string");
+            throw new IllegalArgumentException("direction of the boat must be either a Boolean or string");
         }
         if(vert == true){isVertical = true;}
         else{isVertical = false;}
@@ -130,5 +128,6 @@ public class Ship{
             spotsY[shotY] = -1;
             isAHit = true;
         }
+        else{isAHit = false;}
     }
 }

@@ -8,80 +8,99 @@ import org.junit.jupiter.api.DisplayName;
 
 public class ShipTests {
     @Test
-    @DisplayName("Boolean ctor: horizontal ship populates spots along X")
-    void booleanCtorHorizontalSpots() {
-        Ship s = new Ship(2, 3, false, 3);
-        assertArrayEquals(new int[]{2, 3, 4}, s.getSpotsX(), "spotsX should be 2, 3, and 4");
-        assertArrayEquals(new int[]{3, 3, 3}, s.getSpotsY(), "spotsY should be constant at y=3");
+    @DisplayName("Boolean+String ctor: vertical placement builds spots along +Y")
+    void booleanCtorVerticalSpots() {
+        Ship s = new Ship(2, 3, true, "destroyer"); // size 3
+        assertArrayEquals(new int[]{2, 2, 2}, s.getSpotsX(), "X should be constant when vertical");
+        assertArrayEquals(new int[]{3, 4, 5}, s.getSpotsY(), "Y should increment from start");
         assertEquals(2, s.getX());
         assertEquals(3, s.getY());
+        assertEquals('d', s.getBoatType());
     }
 
     @Test
-    @DisplayName("Boolean ctor: vertical ship populates spots along Y")
-    void booleanCtorVerticalSpots() {
-        Ship s = new Ship(5, 1, true, 4);
-        assertArrayEquals(new int[]{5, 5, 5, 5}, s.getSpotsX(), "spotsX should be constant at x=5");
-        assertArrayEquals(new int[]{1, 2, 3, 4}, s.getSpotsY(), "spotsY should be 1 through 4");
+    @DisplayName("Boolean+String ctor: horizontal placement builds spots along +X")
+    void booleanCtorHorizontalSpots() {
+        Ship s = new Ship(5, 1, false, "cruiser"); // size 3
+        assertArrayEquals(new int[]{5, 6, 7}, s.getSpotsX(), "X should increment when horizontal");
+        assertArrayEquals(new int[]{1, 1, 1}, s.getSpotsY(), "Y should be constant");
         assertEquals(5, s.getX());
         assertEquals(1, s.getY());
+        assertEquals('c', s.getBoatType());
     }
 
     @Test
-    @DisplayName("hit()/isHit(): marking uses last Y match index and X match index independently")
-    void hitMarksIndependentIndices() {
-        // Horizontal ship from (2,3), size 3 -> coords: (2,3), (3,3), (4,3)
-        Ship s = new Ship(2, 3, false, 3);
-
-        // Shoot (3,3): X matches index 1; Y=3 matches all indices (0,1,2) — loop leaves shotY at last match (2)
-        Boolean wasHit = s.isHit(3, 3);
-        assertEquals(Boolean.TRUE, wasHit, "isHit should return true on a hit");
-
-        // After hit: spotsX[1] set to -1; spotsY[2] set to -1 (current implementation detail)
-        assertArrayEquals(new int[]{2, -1, 4}, s.getSpotsX(), "Only the X index that matched should be set to -1");
-        assertArrayEquals(new int[]{3, 3, -1}, s.getSpotsY(), "Y uses last matching index (2) per current code");
-    }
-
-    @Test
-    @DisplayName("isHit(): miss leaves isAHit as null and arrays unchanged")
-    void missLeavesStateUntouched() {
-        Ship s = new Ship(0, 0, true, 2); // coords: (0,0), (0,1)
-
-        // Fire at a clear miss
-        Boolean wasHit = s.isHit(10, 10);
-        assertNull(wasHit, "On a miss, isHit returns the field (null) since code never sets it to false");
+    @DisplayName("String+String ctor: 'vertical' produces vertical spots; 'submarine' size=2")
+    void stringCtorVerticalSpots() {
+        Ship s = new Ship(0, 0, "vertical", "submarine"); // size 2
         assertArrayEquals(new int[]{0, 0}, s.getSpotsX());
         assertArrayEquals(new int[]{0, 1}, s.getSpotsY());
+        assertEquals('s', s.getBoatType());
     }
 
     @Test
-    @DisplayName("Boolean+String ctor: size mapping works for some names; 'aircraft' throws IOException (as coded)")
-    void stringSizeMappingBehavior() {
-        // arrays remain null due to temporary new Ship(...), but size on 'this' is set before that
-        // We can't read 'size' directly (no getter), so we sanity-check no exceptions were thrown.
-        assertDoesNotThrow(() -> new Ship(0, 0, true, "cruiser"));
-
-        // "aircraft" path: size set to index 0, then code throws IOException when size == 0
-        // That IOException is caught in the ctor and swallowed with a println; construction still succeeds.
-        assertDoesNotThrow(() -> new Ship(0, 0, true, "aircraft"),
-                "Constructor catches IOException internally; object is still constructed");
+    @DisplayName("String direction: unknown string defaults to horizontal (no exception)")
+    void stringDirectionUnknownDefaultsHorizontal() {
+        Ship s = new Ship(1, 1, "diagonal?", "destroyer"); // unknown => isVertical=false
+        assertArrayEquals(new int[]{1, 2, 3}, s.getSpotsX());
+        assertArrayEquals(new int[]{1, 1, 1}, s.getSpotsY());
     }
 
     @Test
-    @DisplayName("hit(): multiple hits can mark multiple indices independently")
-    void multipleHits() {
-        Ship s = new Ship(10, 10, false, 4); // (10,10),(11,10),(12,10),(13,10)
+    @DisplayName("Size aliases map correctly (aircraftcarrier/air/a -> size 5, type 'a')")
+    void sizeAliasMapping() {
+        Ship s1 = new Ship(0, 0, true, "air");
+        assertEquals('a', s1.getBoatType());
+        assertEquals(5, s1.getSpotsX().length);
 
-        // First hit at (12,10): X index 2, Y last match index 3 (since all Y=10)
-        s.hit(12, 10);
-        assertArrayEquals(new int[]{10, 11, -1, 13}, s.getSpotsX());
-        assertArrayEquals(new int[]{10, 10, 10, -1}, s.getSpotsY());
-
-        // Second hit at (11,10): X index 1, Y last match now index 2 (since index 3 already -1)
-        s.hit(11, 10);
-        assertArrayEquals(new int[]{10, -1, -1, 13}, s.getSpotsX());
-        assertArrayEquals(new int[]{10, 10, -1, -1}, s.getSpotsY());
+        Ship s2 = new Ship(0, 0, true, "aircraftcarrier");
+        assertEquals('a', s2.getBoatType());
+        assertEquals(5, s2.getSpotsX().length);
     }
 
+    @Test
+    @DisplayName("Invalid size strings are swallowed: arrays end up zero-length")
+    void invalidSizeCreatesZeroLengthArrays() {
+        Ship s = new Ship(0, 0, true, "aircraft carrier"); // has a space; not matched by current parser
+        assertEquals(0, s.getSpotsX().length, "spotsX length is 0 because size parsing failed but was swallowed");
+        assertEquals(0, s.getSpotsY().length, "spotsY length is 0 because size parsing failed but was swallowed");
+    }
 
+    @Test
+    @DisplayName("Null Boolean direction triggers NPE during populateSpots (isVertical auto-unboxing)")
+    void nullBooleanDirectionCausesNpe() {
+        assertThrows(NullPointerException.class, () -> new Ship(0, 0, (Boolean) null, "destroyer"));
+    }
+
+    @Test
+    @DisplayName("Null String direction throws IllegalArgumentException from setDirection(String)")
+    void nullStringDirectionThrowsIAE() {
+        assertThrows(IllegalArgumentException.class, () -> new Ship(0, 0, (String) null, "destroyer"));
+    }
+
+    @Test
+    @DisplayName("isHit()/hit(): horizontal ship marks X at the match index, Y at the last matching index (current behavior)")
+    void hitMarksIndependentIndicesHorizontal() {
+        // Horizontal: (2,3),(3,3),(4,3)
+        Ship s = new Ship(2, 3, false, "destroyer"); // size 3
+        Boolean wasHit = s.isHit(3, 3);
+        assertEquals(Boolean.TRUE, wasHit, "Expected hit to return true");
+
+        // Current code: shotX is index of matching X (1), shotY is last matching Y (2)
+        assertArrayEquals(new int[]{2, -1, 4}, s.getSpotsX(), "Only X at index 1 is set to -1");
+        assertArrayEquals(new int[]{3, 3, -1}, s.getSpotsY(), "Y at last match index (2) is set to -1");
+    }
+
+    @Test
+    @DisplayName("isHit(): miss returns false and arrays unchanged")
+    void missReturnsFalseAndNoChange() {
+        Ship s = new Ship(10, 10, true, "cruiser"); // vertical: (10,10),(10,11),(10,12)
+        int[] beforeX = s.getSpotsX().clone();
+        int[] beforeY = s.getSpotsY().clone();
+
+        Boolean wasHit = s.isHit(99, 99);
+        assertEquals(Boolean.FALSE, wasHit, "Miss should return false");
+        assertArrayEquals(beforeX, s.getSpotsX(), "X unchanged on miss");
+        assertArrayEquals(beforeY, s.getSpotsY(), "Y unchanged on miss");
+    }
 }
