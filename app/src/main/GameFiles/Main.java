@@ -1,6 +1,7 @@
 package app.src.main.GameFiles;
 public class Main {
     public static void main(String[] args){
+        
         try{
         Ocean s = new Ocean(10);
         s.placeRandomBoats();
@@ -12,7 +13,26 @@ public class Main {
             }
             System.out.println();
         }
+        int fireX = (int) (Math.random() * 10);
+        int fireY = (int) (Math.random() * 10);
+        if(s.isHit(fireX, fireY)){
+            System.out.println("Hit at " + fireX + ", " + fireY);
+        }else{
+            System.out.println("Miss at " + fireX + ", " + fireY);
+        }
+        for(Ship ship : s.getBoats()){
+            if(ship.isHit(fireX, fireY)){
+                System.out.println("Target was " + ship.getBoatType());
+            }
+            if(ship.isSunk()){
+                System.out.println("Ship " + ship.getBoatType() + " is sunk!");
+            }else{
+                System.out.println("Ship " + ship.getBoatType() + " is not sunk.");
+            }
+        }
         } catch(Exception e){System.out.println("skadoosh");}
+       
+
 
     }
 }
