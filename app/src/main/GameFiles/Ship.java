@@ -3,39 +3,29 @@ package app.src.main.GameFiles;
 import java.io.IOException;
 
 public class Ship{
-    private int size, startx, starty;
+    private int startx, starty;
+    private char boatType;
+    private int boatSize;
     private Boolean isVertical, isAHit;
     private int[] spotsX, spotsY;
     //initialize ship position
      //overload the constructor to allow different kinds of input
-     public Ship(int x, int y, Boolean vertical, int s){
+     public Ship(int x, int y, Boolean vertical, String s){
         try{this.setXY(x,y);}catch(IllegalArgumentException e){System.out.println("coordinates of the boat must be integers");}
         try{setDirection(vertical);}catch(IllegalArgumentException e){
-            System.out.println("direction of the boat must be either a boolean or string");
+            System.out.println(e);
         }
-        try{setSize(s);}catch(IllegalArgumentException e){
-            System.out.println("size of the boat must be an integer or valid string");
-        }
-        populateSpots(size, x, y);
-    }
-    public Ship(int x, int y, String vertical, int s){
-        try{setDirection(vertical);}catch(IllegalArgumentException e){System.out.println("direction of the boat must be either a boolean or string");}
-        try{setSize(s);}catch(IllegalArgumentException e){System.out.println("size of the boat must be an integer or valid string");}
-        populateSpots(size, x, y);
-    }
-    public Ship(int x, int y, Boolean vertical, String s){
-        setDirection(vertical); 
         try{setSize(s);}catch(IllegalArgumentException | IOException e){
-            System.out.println("size of the boat must be an integer or valid string. If the input isn't a valid string, check the IO exception");
+            System.out.println(e);
         }
-        populateSpots(size, x, y);
+        populateSpots(boatSize, x, y);
     }
     public Ship(int x, int y, String vertical, String s){
         setDirection(vertical);
         try{setSize(s);}catch(IllegalArgumentException | IOException e){
-            System.out.println("size of the boat must be an integer or valid string. If the input isn't a valid string, check the IO exception");
+            System.out.println(e);
         }
-        populateSpots(size, x, y);
+        populateSpots(boatSize, x, y);
     }
 
     private void populateSpots(int size, int x, int y){
@@ -58,13 +48,6 @@ public class Ship{
         }
         startx = x; starty = y;
     }
-    //2 methods for direction and size setting for simplicity later on
-    private void setSize(int s) throws IllegalArgumentException{
-        if (s != (int)s){
-            throw new IllegalArgumentException("size of the boat must be an integer or valid string");
-        }
-        size = s;
-    }
     private void setSize(String s) throws IllegalArgumentException, IOException{
         if (!(s instanceof String)){
             throw new IllegalArgumentException("size of the boat must be either an integer or valid string");
@@ -77,16 +60,20 @@ public class Ship{
             {"cruiser", "c"}, //cruiser
             {"submarine", "sub", "s"}, //submarines
         };
+        int selectBoat = 10;
         for(int i = 0; i < sizes.length; i++){
             for(String m: sizes[i]){
-                if(m.equals(s)){size = i;}
+                if(m.equals(s)){selectBoat = i;} 
             }
         }
-        if(size == 0){throw new IOException("size input is not contained in the string list not is it a valid integer");}
+        if(selectBoat == 10){throw new IOException("size input is not contained in the string list not is it a valid integer");}
         //map the position in the sizes array to actual ship size
+        char[] type_map = new char[]{'a', 'b', 'd', 'c', 's'};
         int[] size_map = new int[]{5, 4, 3, 3, 2};
-        size = size_map[size];
+        boatType = type_map[selectBoat];
+        boatSize = size_map[selectBoat];
     }
+    //2 methods for direction setting for simplicity later on
     private void setDirection(String vert) throws IllegalArgumentException{
         if (!(vert instanceof String)){
             throw new IllegalArgumentException("direction of the boat must be either a boolean or string");
@@ -113,6 +100,7 @@ public class Ship{
     public int[] getSpotsY(){return spotsY;}
     public int getX(){return startx;}
     public int getY(){return starty;}
+    public char getBoatType(){return boatType;}
     //hit tracking
     public Boolean isHit(int x, int y) throws IllegalArgumentException{
         if(x != (int)x || y != (int)y){

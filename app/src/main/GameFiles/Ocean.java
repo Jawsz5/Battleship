@@ -3,8 +3,8 @@ import java.util.ArrayList;
 
 public class Ocean{
     private int dimension;
-    private int[][] grid;
-    private ArrayList<String> Boats = new ArrayList<String>();
+    private char[][] grid;
+    private ArrayList<Ship> Boats = new ArrayList<Ship>();
     private String[] boatNames = new String[]{"aircraft carrier", "battleship", "destroyer", "cruiser", "submarine"};
 
     public Ocean(int dim)throws Exception {
@@ -13,10 +13,10 @@ public class Ocean{
             throw new IllegalArgumentException("Row and column must be greater than zero and less than or equal to 20");
         }
         else{
-            grid = new int[dimension][dimension];
+            grid = new char[dimension][dimension];
             for(int i = 0; i < dimension; i++) {
                 for(int j = 0; j < dimension; j++) {
-                    grid[i][j] = 0; // Initialize the grid with zeros
+                    grid[i][j] = 'e'; // Initialize the grid with zeros
                 }
             }
         }
@@ -31,12 +31,12 @@ public class Ocean{
         }
         for(int i = 0; i < boatLength; i++){ //check if boat overlaps with another boat
             if(grid[boatSpotX[i]][boatSpotY[i]] == 0){
-                grid[boatSpotX[i]][boatSpotY[i]] = 1;
+                grid[boatSpotX[i]][boatSpotY[i]] = s.getBoatType(); //using boatType instead of 1 in order to make the ocean more descriptive
             } else{
                 throw new IllegalArgumentException("Boat overlaps with another boat");
             }
         }
-        Boats.add(size);
+        Boats.add(s);
     }
     //MOURYA this isn't manual or random. wtf does this do
     public void placeBoats(int row, int col, Boolean orientation){
@@ -62,7 +62,15 @@ public class Ocean{
             boatsPlaced += 1;
         }while(boatsPlaced != 5);
     }
-    public int[][] getGrid(){return grid;}
-    public ArrayList<String> getBoats(){return Boats;}
+    public Boolean isHit(int x, int y){
+        //checks to see if a boat is on a sqaure
+        if(grid[x][y] != 0){
+            return true;
+        }
+        return false;
+    }
+
+    public char[][] getGrid(){return grid;}
+    public ArrayList<Ship> getBoats(){return Boats;}
     public int getDimension(){return dimension;}
 }
