@@ -2,50 +2,41 @@ package app.src.main.Game;
 import java.util.ArrayList;
 
 public class Ocean{
-    private int row;
-    private int col;
+    private int dimension;
     private int[][] grid;
     private ArrayList<String> Boats = new ArrayList<>();
 
-    public Ocean(int rowcol)throws Exception {
-        if(rowcol <= 0) {
-            throw new IllegalArgumentException("Row and column must be greater than zero.");
-        }
-        else if(rowcol > 20){
-            throw new IllegalArgumentException("Row and column must be less than or equal to 20.");
+    public Ocean(int dim)throws Exception {
+        dimension = dim;
+        if(dimension <= 0 || dimension > 20){ //arbitrary max map size of 20x20
+            throw new IllegalArgumentException("Row and column must be greater than zero and less than or equal to 20");
         }
         else{
-            row = rowcol;
-            col = rowcol;
-            grid = new int[row][col];
-            for(int i = 0; i < row; i++) {
-                for(int j = 0; j < col; j++) {
+            grid = new int[dimension][dimension];
+            for(int i = 0; i < dimension; i++) {
+                for(int j = 0; j < dimension; j++) {
                     grid[i][j] = 0; // Initialize the grid with zeros
                 }
             }
-
         }
     }
-    public void addBoats(int row, int col, Boolean orientation, String size) throws Exception{
-        Ship s = new Ship(row, col, orientation, size);
-        int[] boatSpotx = s.getSpotsX();
-        int[] boatSpoty = s.getSpotsY();
-        for(int i = 0; i < boatSpotx.length; i++){
-            if(boatSpotx[i] < row && boatSpoty[i] < col && boatSpotx[i] >= 0 && boatSpoty[i] >= 0){
-                if(grid[boatSpotx[i]][boatSpoty[i]] == 0){
-                    grid[boatSpotx[i]][boatSpoty[i]] = 1; // Mark the boat's position
-                }else {
-                    throw new IllegalArgumentException("Boat overlaps with another boat or is out of bounds.");
-                }
-
-            }else{
-                throw new IllegalArgumentException("Boat is out of bounds.");
+    public void addBoats(int x, int y, Boolean direction, String size) throws Exception{
+        Ship s = new Ship(x, y, direction, size);
+        int[] boatSpotX = s.getSpotsX();
+        int[] boatSpotY = s.getSpotsY();
+        int boatLength = boatSpotX.length;
+        if(x < 0 || y < 0 || boatSpotX[boatLength - 1] > dimension || boatSpotY[boatLength - 1] > dimension){
+            throw new IllegalArgumentException("Boat is out of bounds.");
+        }
+        for(int i = 0; i < boatLength; i++){
+            if(grid[boatSpotX[i]][boatSpotY[i]] == 0){
+                grid[boatSpotX[i]][boatSpotY[i]] = 1;
+            } else{
+                throw new IllegalArgumentException("Boat overlaps with another boat");
             }
-        
+        }
+        Boats.add(size);
     }
-    Boats.add(size);
-
-}
                 
     public void PlaceBoats(int row, int col, Boolean orientation){
         for(int i = 0; i < 5; i++){
@@ -59,4 +50,5 @@ public class Ocean{
     }
     public int[][] getGrid(){return grid;}
     public ArrayList<String> getBoats(){return Boats;}
+    public int getDimension(){return dimension;}
 }
