@@ -62,12 +62,7 @@ public class Game{
                 System.out.println("\n");
             }
             System.out.println("\n\n\n");
-            /*for(int j = 0; j < playerOcean.getDimension(); j++){
-                for(int k = 0; k < playerOcean.getDimension(); k++){. //Used for testing purposes
-                    System.out.print(grid[j][k] + " ");
-                }
-                System.out.println();
-            }*/
+            
             if(playerOcean.isAllSunk()){
                 gameWon = true;
                 System.out.println("All ships have been sunk!");
