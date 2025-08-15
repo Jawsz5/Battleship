@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Game{
     private int maxTurns;
     private char[][] hitMap;
+    //private char[][] grid;
     private Ocean playerOcean;
     private int xShot, yShot;
     private boolean gameWon = false;
@@ -16,6 +17,7 @@ public class Game{
         catch(Exception e){System.out.println(e);}
 
         hitMap = new char[mapSize][mapSize];
+        //grid = playerOcean.getGrid();
         for(int i = 0; i < mapSize; i++) {
             for(int j = 0; j < mapSize; j++) {
                 hitMap[i][j] = 'm'; // Initialize the hitMap with zeros
@@ -61,6 +63,12 @@ public class Game{
                 System.out.println("\n");
             }
             System.out.println("\n\n\n");
+            /*for(int j = 0; j < playerOcean.getDimension(); j++){
+                for(int k = 0; k < playerOcean.getDimension(); k++){. //Used for testing purposes
+                    System.out.print(grid[j][k] + " ");
+                }
+                System.out.println();
+            }*/
             if(playerOcean.isAllSunk()){
                 gameWon = true;
                 System.out.println("All ships have been sunk!");

@@ -47,6 +47,7 @@ public class Main {
             }catch(Exception e){System.out.println("skadoosh");}
             System.out.println("All ships sunk! You win!");
             input.close();
+
         
        */
       Game g1 = new Game(10, 100);
