@@ -97,6 +97,15 @@ public class Ship{
     public int getX(){return startx;}
     public int getY(){return starty;}
     public char getBoatType(){return boatType;}
+    public String getBoatName(){
+        String[] boatTypeToName = new String[]{"aircraft carrier", "battleship", "destroyer", "cruiser", "submarine"};
+        for(String i: boatTypeToName){
+            if(getBoatType() == i.charAt(0)){
+                return i;
+            }
+        }
+        return "no boat name found"; //base case that is never reached 
+    }
     //hit tracking
     public Boolean isHit(int x, int y) throws IllegalArgumentException{
         if(x != (int)x || y != (int)y){

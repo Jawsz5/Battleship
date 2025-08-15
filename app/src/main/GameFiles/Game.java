@@ -18,7 +18,7 @@ public class Game{
         hitMap = new char[mapSize][mapSize];
         for(int i = 0; i < mapSize; i++) {
             for(int j = 0; j < mapSize; j++) {
-                hitMap[i][j] = 'm'; // Initialize the hitMap with zeros
+                hitMap[i][j] = '1'; // Initialize the hitMap with zeros
             }
         }
         if(maxNumTurns > mapSize * 10){throw new IllegalArgumentException("Max number of turns for the game must be less than 10x the dimension of the map");}
@@ -33,17 +33,16 @@ public class Game{
         if(y < 0 || y > 9){
             throw new IllegalArgumentException("Y-coordinate is out of bounds");
         }
+        if(hitMap[x][y] != '1'){
+            throw new IllegalArgumentException("Spot has already been shot at");
+        }
         if(playerOcean.getGrid()[x][y] != 'e'){
             hitMap[x][y] = 'X';
             for(Ship s: boats){
-                for(int k: s.getSpotsX()){
-                    if(k == x){
-                        k = -1;
-                    }
-                }
-                for(int k: s.getSpotsY()){
-                    if(k == x){
-                        k = -1;
+                for(int i = 0; i < s.getSpotsX().length; i++){
+                    if(s.getSpotsX()[i] == x && s.getSpotsY()[i] == y){
+                        s.getSpotsX()[i] = -1;
+                        s.getSpotsY()[i] = -1;
                     }
                 }
             }
@@ -69,13 +68,17 @@ public class Game{
                 System.out.println("You win!");
                 break;
             }
-            for(Ship boat: boats){
-                if(boat.isSunk()){
-                    System.out.println(boat.getBoatType() + " is sunk!");
-                    boats.remove(boat); 
+            int boatToRemove = 0;
+            boolean isBoatSunk = false;
+            for(int m = 0; m < boats.size(); m++){
+                if(boats.get(m).isSunk()){
+                    System.out.println(boats.get(m).getBoatName() + " is sunk!");
+                    boatToRemove = m; 
+                    isBoatSunk = true;
                     //only output the message once, boats is a duplicate of the internal ocean boat arraylist so nothing is actually changed
                 }
             }
+            if(isBoatSunk){boats.remove(boatToRemove);}
 
             //prompt the user for a shot
             boolean isShotFired = false;

@@ -6,7 +6,7 @@ import app.src.main.GameFiles.Ocean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class OceanTests{
+class OceanTest{
     // Constructor
 
     @Test

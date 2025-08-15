@@ -6,7 +6,7 @@ import app.src.main.GameFiles.Ship;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 
-public class ShipTests {
+public class ShipTest {
     @Test
     @DisplayName("Boolean+String ctor: vertical placement builds spots along +Y")
     void booleanCtorVerticalSpots() {
