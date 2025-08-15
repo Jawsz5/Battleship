@@ -2,6 +2,7 @@ package app.src.main.GameFiles;
 import java.util.Scanner;
 public class Main {
     public static void main(String[] args){
+        /* 
         Scanner input = new Scanner(System.in);
         try{
         Ocean s = new Ocean(10);
@@ -47,7 +48,9 @@ public class Main {
             System.out.println("All ships sunk! You win!");
             input.close();
         
-       
+       */
+      Game g1 = new Game(10, 100);
+      g1.playGameOnTerminal_Human();
 
 
      }

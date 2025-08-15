@@ -1,7 +1,5 @@
 package app.src.main.GameFiles;
 
-import java.io.IOException;
-
 public class Ship{
     private int startx, starty;
     private char boatType;
