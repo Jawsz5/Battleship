@@ -1,7 +1,6 @@
-package GameFiles;
-
-
 import java.io.IOException;
+
+import GameFiles.Game;
 
 
 public class Main {
