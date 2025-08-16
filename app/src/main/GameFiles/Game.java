@@ -1,10 +1,12 @@
 package app.src.main.GameFiles;
 import java.util.Scanner;
+import java.io.IOException;
 import java.util.ArrayList;
+import app.src.main.ComputerStrategies.RandomStrat;
 
 
 public class Game{
-    private int maxTurns;
+    private int maxTurns, turnsPlayed, dimension;
     private char[][] hitMap;
     //private char[][] grid;
     private Ocean playerOcean;
@@ -15,6 +17,8 @@ public class Game{
     public Game(int mapSize, int maxNumTurns){
         try{playerOcean = new Ocean(mapSize);}
         catch(Exception e){System.out.println(e);}
+        turnsPlayed = 0;
+        dimension = mapSize;
 
         hitMap = new char[mapSize][mapSize];
         //grid = playerOcean.getGrid();
@@ -62,7 +66,7 @@ public class Game{
                 System.out.println("\n");
             }
             System.out.println("\n\n\n");
-            
+
             if(playerOcean.isAllSunk()){
                 gameWon = true;
                 System.out.println("All ships have been sunk!");
@@ -82,7 +86,7 @@ public class Game{
                 }
             }
             if(isBoatSunk){boats.remove(boatToRemove);}
-
+            turnsPlayed += 1;
             //prompt the user for a shot
             boolean isShotFired = false;
             do{
@@ -99,6 +103,21 @@ public class Game{
         }
         if(!gameWon){System.out.println("You Lose :(");}
         shotInput.close();
+    }
+    public void playGameComputer() throws IOException{
+        RandomStrat r = new RandomStrat(dimension);
+        for(int i = 0; i < dimension*dimension + 1; i++){
+            if(playerOcean.isAllSunk()){gameWon = true;break;}
+            turnsPlayed += 1;
+            int[] shot = new int[2];
+            shot = r.selectShot();
+            shoot(shot[0], shot[1]);
+        }
+        if(!gameWon){throw new IOException("Strategy failed to complete the game");} 
+        //due to shoot mechanic that prevents refires on the same square, this should never happen
+    }
+    public int getTurnsPlayed(){
+        return turnsPlayed;
     }
 
     
