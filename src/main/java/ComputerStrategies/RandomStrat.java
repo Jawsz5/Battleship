@@ -18,6 +18,11 @@ public class RandomStrat {
     int spot = y * dimension + x;   // same encoding as in selectShot
     return squares.contains(spot);
 }
+
+    public void removeSquare(int x, int y){
+        squares.remove(y * dimension + x);
+    }
+
    
    public int[] selectShot() {
        if (squares.isEmpty()) throw new IllegalStateException("No squares left");

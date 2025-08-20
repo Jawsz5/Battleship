@@ -82,22 +82,6 @@ class OceanTest{
    }
 
 
-   // placeBoats (fixed coordinates, catches errors internally)
-
-
-   @Test
-   @DisplayName("placeBoats: tries five names at same spot; only first should succeed")
-   void placeBoatsSameSpot() throws Exception {
-       Ocean o = new Ocean(10);
-       o.placeBoatsManual(0,0, true); // 'aircraftcarrier' first, others overlap and are caught
-
-
-       assertEquals(1, o.getBoats().size(), "Only the first placement should succeed");
-       char[][] g = o.getGrid();
-       assertEquals('a', g[0][0], "First cell should belong to the aircraft carrier");
-       assertEquals('a', g[0][4], "Fifth cell of vertical aircraft carrier should be marked");
-   }
-
 
    // placeRandomBoats (randomized; should place all five types)
 

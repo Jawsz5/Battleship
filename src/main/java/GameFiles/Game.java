@@ -38,7 +38,7 @@ public class Game{
        }
        if(maxNumTurns > mapSize * 10){throw new IllegalArgumentException("Max number of turns for the game must be less than 10x the dimension of the map");}
        maxTurns = maxNumTurns;
-       playerOcean.placeRandomBoats();
+       playerOcean.placeBoatsManual();
        boats = playerOcean.getBoats();
    }
    private void shoot(int x, int y) throws IllegalArgumentException{
@@ -116,7 +116,7 @@ public class Game{
        shotInput.close();
    }
    public void playGameComputer() throws IOException{
-       RandomHuntStrat r = new RandomHuntStrat(dimension, playerOcean);
+       RandomStrat r = new RandomStrat(dimension);
        while (!playerOcean.isAllSunk() && turnsPlayed < dimension * dimension) {
         turnsPlayed++;
         int[] shot = r.selectShot();

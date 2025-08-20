@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public class RandomHuntStrat extends RandomStrat {
     private Ocean hitTracker;
-    private char[][] grid;
     private int[] previousShot;
     private ArrayList<Ship> boats;
     private ArrayList<int[]> candidates;
@@ -13,9 +12,9 @@ public class RandomHuntStrat extends RandomStrat {
     public RandomHuntStrat(int mapSize, Ocean o){
         super(mapSize);
         hitTracker = o;
-        grid = hitTracker.getGrid();
         boats = hitTracker.getBoats();
         previousShot = super.selectShot();
+        //System.out.println(previousShot[0] + " and " + previousShot[1]);
         candidates = new ArrayList<>();
     }
     
@@ -54,11 +53,20 @@ public class RandomHuntStrat extends RandomStrat {
             int[] candidate = candidates.remove(0);
             if(isAvailable(candidate[0], candidate[1])){
                 previousShot = candidate;
+                //removeSquare(candidate[0], candidate[1]);
+                //System.out.println(previousShot[0] + " and " + previousShot[1]);
                 return previousShot;
             }
         }
 
         previousShot = super.selectShot();
-        return previousShot;
+        if(isAvailable(previousShot[0], previousShot[1])){
+             //System.out.println(previousShot[0] + " and " + previousShot[1]);
+            return previousShot;
+
+        }
+        //System.out.println("hi");
+        return new int[]{0,7};
+       
     }
 }
