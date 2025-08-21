@@ -64,7 +64,7 @@ public class Ocean{
 
         }catch(Exception e){System.out.println("Boat Failed to place");}
 
-    }while(boatsPlaced != 5);
+    }while(boatsPlaced < 5);
     
    }
    public void placeRandomBoats(){
