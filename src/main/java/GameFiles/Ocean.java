@@ -1,5 +1,6 @@
 package GameFiles;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 public class Ocean{
@@ -41,17 +42,30 @@ public class Ocean{
        }
        Boats.add(s);
    }
-   //MOURYA this isn't manual or random. wtf does this do
-   public void placeBoatsManual(int startRow, int startCol, Boolean orientation){
-       for(int i = 0; i < 5; i++){
-           try {
-               addBoats(startRow, startCol, orientation, boatNames[i]);
-           } catch (Exception e) {
-               System.out.println("Error placing boat");
-           }
+   
+   public void placeBoatsManual(){
+    int boatsPlaced = 0;
+    Scanner scan = new Scanner(System.in);
+    do{
+        System.out.println("Enter a starting row: ");
+        int startRow = scan.nextInt();
+        System.out.println("Enter a starting Column: ");
+        int startCol = scan.nextInt();
+        System.out.println("Enter a true or false for boat direction (True for Vertical; False for Horizontal): ");
+        boolean orientation = scan.nextBoolean();
+        System.out.println("Enter the name of the boat (aircraft, battleship, cruiser, destroyer, submarine)");
+        scan.nextLine();
+        String size = scan.nextLine();
+        try{
+            addBoats(startRow, startCol, orientation, size);
+            System.out.println("Boat placed successfully");
+            boatsPlaced += 1;
 
 
-       }
+        }catch(Exception e){System.out.println("Boat Failed to place");}
+
+    }while(boatsPlaced < 5);
+    
    }
    public void placeRandomBoats(){
        int boatsPlaced = 0;
@@ -67,6 +81,7 @@ public class Ocean{
            } catch(Exception e){}
        }while(boatsPlaced != 5);
    }
+
    public Boolean isHit(int x, int y){
        //checks to see if a boat is on a sqaure
        if(grid[x][y] != 'e'){

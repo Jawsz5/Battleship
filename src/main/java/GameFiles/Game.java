@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import ComputerStrategies.RandomStrat;
 import ComputerStrategies.ProbabilityMapStrat;
+import ComputerStrategies.RandomHuntStrat;
 
 
 import java.io.IOException;
@@ -137,8 +138,7 @@ public class Game{
         if(!gameWon){throw new IOException("Strategy failed to complete the game");}
         //due to shoot mechanic that prevents refires on the same square, this should never happen
     }
-   public int getTurnsPlayed(){
-       return turnsPlayed;
-   }
-  
+    public int getTurnsPlayed(){
+        return turnsPlayed;
+    }
 }

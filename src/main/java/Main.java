@@ -9,13 +9,15 @@ public class Main {
    //g1.playGameOnTerminal_Human();
    //try{g1.playGameComputer();}catch(Exception e){System.out.println(e);System.out.println(g1.getTurnsPlayed());};
    int totalTurns = 0;
-   for(int i = 0; i < 1000; i++){
-     try{
-       Game g = new Game(10, 10);
-       g.playGameComputer();
-       totalTurns += g.getTurnsPlayed();
-     }catch(IOException e){System.out.println(e);}
-   }
-   System.out.println(totalTurns / 1000);
+   Game g = new Game(10, 100);
+   try{
+    g.playGameComputer();
+    totalTurns += g.getTurnsPlayed();
+    System.out.println(totalTurns);
+   }catch(Exception e){System.out.println(e);}
+   
+    
+   
+   
   }
 }

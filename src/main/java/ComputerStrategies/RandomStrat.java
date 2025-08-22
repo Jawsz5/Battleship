@@ -14,6 +14,16 @@ public class RandomStrat {
            squares.add(i);
        }
    }
+   public boolean isAvailable(int x, int y){
+    int spot = y * dimension + x;   // same encoding as in selectShot
+    return squares.contains(spot);
+}
+
+    public void removeSquare(int x, int y){
+        squares.remove(y * dimension + x);
+    }
+
+   
    public int[] selectShot() {
        if (squares.isEmpty()) throw new IllegalStateException("No squares left");
        int idx = ThreadLocalRandom.current().nextInt(squares.size());
