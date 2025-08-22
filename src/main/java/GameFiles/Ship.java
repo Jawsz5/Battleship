@@ -110,6 +110,16 @@ public class Ship{
        }
        return "no boat name found"; //base case that is never reached
    }
+    public int getBoatLength(){
+        return switch (boatType){
+            case 'a' -> 5;
+            case 'b' -> 4;
+            case 'd', 'c' -> 3;
+            case 's' -> 2;
+            default -> throw new IllegalStateException("Unknown boat type: " + boatType);
+        };
+    }
+
    //hit tracking
    public Boolean isHit(int x, int y) throws IllegalArgumentException{
        if(x != (int)x || y != (int)y){
