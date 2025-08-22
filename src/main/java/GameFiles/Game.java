@@ -3,11 +3,13 @@ import java.util.Scanner;
 
 
 import ComputerStrategies.RandomStrat;
+import ComputerStrategies.ProbabilityMapStrat;
 import ComputerStrategies.RandomHuntStrat;
 
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 
@@ -115,23 +117,28 @@ public class Game{
        if(!gameWon){System.out.println("You Lose :(");}
        shotInput.close();
    }
-   public void playGameComputer() throws IOException{
-       RandomHuntStrat r = new RandomHuntStrat(dimension, playerOcean);
-       while (!playerOcean.isAllSunk() && turnsPlayed < dimension * dimension) {
-        turnsPlayed++;
-        int[] shot = r.selectShot();
+    public void playGameComputer() throws IOException{
+        //RandomStrat r = new RandomStrat(dimension);
+        ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
+        for(int i = 0; i < dimension*dimension + 1; i++){
+            if(playerOcean.isAllSunk()){gameWon = true;break;}
+        turnsPlayed += 1;
+        int[] shot = new int[2];
+        shot = r.selectShot();
         shoot(shot[0], shot[1]);
-    }
+        int sunkBoatLength = 0;
+        for(Ship s: boats){
+            if(s.isSunk()){
+                sunkBoatLength = s.getBoatLength();
+            }
+        }
+        r.trackShot(playerOcean.isHit(shot[0], shot[1]), sunkBoatLength, shot[0], shot[1]);
+        }
 
-    if (!playerOcean.isAllSunk()) {
-        throw new IOException("Strategy failed to complete the game");
-    } else {
-        gameWon = true;
+        if(!gameWon){throw new IOException("Strategy failed to complete the game");}
+        //due to shoot mechanic that prevents refires on the same square, this should never happen
     }
-}
-
-   public int getTurnsPlayed(){
-       return turnsPlayed;
-   }
-  
+    public int getTurnsPlayed(){
+        return turnsPlayed;
+    }
 }
