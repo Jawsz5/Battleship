@@ -2,14 +2,9 @@ package GameFiles;
 import java.util.Scanner;
 
 
-import ComputerStrategies.RandomStrat;
 import ComputerStrategies.ProbabilityMapStrat;
-import ComputerStrategies.RandomHuntStrat;
-
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 
 
@@ -44,10 +39,10 @@ public class Game{
        boats = playerOcean.getBoats();
    }
    private void shoot(int x, int y) throws IllegalArgumentException{
-       if(x < 0 || x > playerOcean.getDimension()){
+       if(x < 0 || x >= playerOcean.getDimension()){
            throw new IllegalArgumentException("X-coordinate is out of bounds");
        }
-       if(y < 0 || y > playerOcean.getDimension()){
+       if(y < 0 || y >= playerOcean.getDimension()){
            throw new IllegalArgumentException("Y-coordinate is out of bounds");
        }
        if(hitMap[x][y] != '1'){

@@ -45,26 +45,27 @@ public class Ocean{
    
    public void placeBoatsManual(){
     int boatsPlaced = 0;
-    Scanner scan = new Scanner(System.in);
-    do{
-        System.out.println("Enter a starting row: ");
-        int startRow = scan.nextInt();
-        System.out.println("Enter a starting Column: ");
-        int startCol = scan.nextInt();
-        System.out.println("Enter a true or false for boat direction (True for Vertical; False for Horizontal): ");
-        boolean orientation = scan.nextBoolean();
-        System.out.println("Enter the name of the boat (aircraft, battleship, cruiser, destroyer, submarine)");
-        scan.nextLine();
-        String size = scan.nextLine();
-        try{
-            addBoats(startRow, startCol, orientation, size);
-            System.out.println("Boat placed successfully");
-            boatsPlaced += 1;
+    try (Scanner scan = new Scanner(System.in)) {
+        do{
+            System.out.println("Enter a starting row: ");
+            int startRow = scan.nextInt();
+            System.out.println("Enter a starting Column: ");
+            int startCol = scan.nextInt();
+            System.out.println("Enter a true or false for boat direction (True for Vertical; False for Horizontal): ");
+            boolean orientation = scan.nextBoolean();
+            System.out.println("Enter the name of the boat (aircraft, battleship, cruiser, destroyer, submarine)");
+            scan.nextLine();
+            String size = scan.nextLine();
+            try{
+                addBoats(startRow, startCol, orientation, size);
+                System.out.println("Boat placed successfully");
+                boatsPlaced += 1;
 
 
-        }catch(Exception e){System.out.println("Boat Failed to place");}
+            }catch(Exception e){System.out.println("Boat Failed to place");}
 
-    }while(boatsPlaced < 5);
+        }while(boatsPlaced < 5);
+    }
     
    }
    public void placeRandomBoats(){

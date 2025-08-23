@@ -23,7 +23,7 @@ public class ProbabilityMapStrat {
         //calcuclate the number of ships per cell
         cellLength = new int[nCells];
         int cid = 0;
-        shipTypeStart = new int[]{shipSizes.length};
+        shipTypeStart = new int[shipSizes.length + 1];
         for(int m = 0; m < shipSizes.length; m++){
             int s = shipSizes[m];
             shipTypeStart[m] = cid;
@@ -46,13 +46,15 @@ public class ProbabilityMapStrat {
                 }
             }
         }
+        shipTypeStart[shipSizes.length] = nCandidates;
 
         //build the CSR
-        cellStart = new int[nCells];
-        for(int i = 0; i < nCells; i+=cellLength[i]){
-            cellStart[i] = i;
+        cellStart = new int[nCells + 1];
+        cellStart[0] = 0;
+        for(int i = 0; i < nCells; i++){
+            cellStart[i+1] = cellStart[i] + cellLength[i];
         }
-        cellIDs = new short[nCandidates];
+        cellIDs = new short[cellStart[nCells]];
         int[] cursors = cellStart.clone();
         //add candidates to their respective cells, add cells to the cell id's
         cid = 0;
@@ -63,7 +65,7 @@ public class ProbabilityMapStrat {
                     for(int i = 0; i < s; i++){
                         int cell = flaten(x+i, y);
                         candCellsOcc[cid*maxShipSize + i] = (short) cell;
-                        cellIDs[cursors[cell]] = (short) cid;
+                        cellIDs[cursors[cell]++] = (short) cid;
                     }
                 }
             }
@@ -73,13 +75,13 @@ public class ProbabilityMapStrat {
                     for(int i = 0; i < s; i++){
                         int cell = flaten(x, y+i);
                         candCellsOcc[cid*maxShipSize + i] = (short) cell;
-                        cellIDs[cursors[cell]] = (short) cid;
+                        cellIDs[cursors[cell]++] = (short) cid;
                     }
                 }
             }
         }
         alive = new java.util.BitSet(nCandidates);
-        alive.set(1, nCandidates); // all candidates start alive
+        alive.set(0, nCandidates); // all candidates start alive
 
     }
     private int flaten(int x, int y){return dim * y + x;} //flaten the 2-d coordinates to 1-d for speed and to match the dimension of cells
@@ -90,19 +92,75 @@ public class ProbabilityMapStrat {
         }
         return count;
     }
-    public void trackShot(boolean hit, int sunk, int x, int y){
-        
-    }
-    public int[] selectShot(){
-        int maxIndex = 0;
-        int greatestProb = 0;
-        for(int i = 0; i < nCells; i++){
-            if(cellLength[i] > greatestProb){
-                greatestProb = cellLength[i];
-                maxIndex = i;
+
+    private final java.util.BitSet fired = new java.util.BitSet(); // cells already shot
+
+    public void trackShot(boolean hit, int sunkLen, int x, int y) {
+        int cell = flaten(x, y);
+        fired.set(cell); // never pick this cell again
+
+        // MISS: kill all candidates that cover (x,y)
+        if (!hit) {
+            int start = cellStart[cell], end = cellStart[cell + 1];
+            for (int i = start; i < end; i++) {
+                int cid = cellIDs[i] & 0xFFFF;
+                alive.clear(cid);
             }
+            return;
         }
-        return new int[]{maxIndex/10, maxIndex%10};
+
+        // HIT but no sink: defer removals (keeps target-mode probabilities strong)
+        if (sunkLen < 0) return;
+
+        // SINK: remove the entire block for that ship length using shipTypeStart
+        for (int t = 0; t < shipTypeStart.length - 1; t++) {
+            int a = shipTypeStart[t], b = shipTypeStart[t + 1];
+            if ((candLength[a] & 0xFF) != sunkLen) continue;
+
+            // skip if already removed
+            if (alive.nextSetBit(a) >= b) continue;
+
+            // clear all candidates of this sunk type (fast range clear)
+            alive.clear(a, b);
+            break; // only one ship of that length sunk
+        }
     }
+
+    // helper to count alive candidates covering a cell (≤34 checks)
+    private int aliveCountAtCell(int cell) {
+        int s = cellStart[cell], e = cellStart[cell + 1], c = 0;
+        for (int i = s; i < e; i++) {
+            int cid = cellIDs[i] & 0xFFFF;
+            if (alive.get(cid)) c++;
+        }
+        return c;
+    }
+
+    // choose the best (x,y) based on current alive counts; skip fired cells
+    public int[] selectShot() {
+        int bestCell = -1, bestScore = Integer.MIN_VALUE;
+        for (int cell = 0; cell < nCells; cell++) {
+            if (fired.get(cell)) continue;              // don't re-fire
+            int score = aliveCountAtCell(cell);
+            if (score > bestScore) { bestScore = score; bestCell = cell; }
+        }
+        if (bestCell < 0) throw new IllegalStateException("No cells left");
+
+        /* 
+        System.out.println(bestCell%dim + " " + bestCell/dim);
+        for(int i = 0; i < dim; i++){
+            for(int j = 0; j < dim; j++){
+                System.out.print(aliveCountAtCell(flaten(i,j)) + " ");
+            }
+            System.out.println("\n");
+        }
+        System.out.println("\n\n\n\n");
+        */
+        // invert flaten(x,y) = y*dim + x
+        int x = bestCell % dim;
+        int y = bestCell / dim;
+        return new int[]{x, y};
+    }
+
 
 }
