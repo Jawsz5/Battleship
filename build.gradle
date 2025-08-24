@@ -1,18 +1,18 @@
 plugins {
-   id 'java'
+  id 'java'
+  id 'application'
 }
-
-plugins { id 'java' }
 
 java {
   toolchain { languageVersion = JavaLanguageVersion.of(23) }
   modularity.inferModulePath = false
 }
 
-repositories {
-   mavenCentral()
+application{
+  mainClass = 'app.Main';
 }
 
+repositories { mavenCentral() }
 
 dependencies {
   testImplementation platform("org.junit:junit-bom:5.11.3")
@@ -20,10 +20,4 @@ dependencies {
   testRuntimeOnly  "org.junit.platform:junit-platform-launcher"
 }
 
-
-
-test {
-   useJUnitPlatform()
-}
-
-
+test { useJUnitPlatform() }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ShipTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2025-08-24T20:30:50.417Z" hostname="Jazils-Computer-2.local" time="0.005">
+<testsuite name="ShipTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2025-08-24T20:58:41.212Z" hostname="Jazils-Computer-2.local" time="0.005">
   <properties/>
   <testcase name="String direction: unknown string defaults to horizontal (no exception)" classname="ShipTest" time="0.001"/>
   <testcase name="isHit()/hit(): horizontal ship marks X at the match index, Y at the last matching index (current behavior)" classname="ShipTest" time="0.0"/>
@@ -10,7 +10,7 @@
   <testcase name="Size aliases map correctly (aircraftcarrier/air/a -&gt; size 5, type 'a')" classname="ShipTest" time="0.001"/>
   <testcase name="Invalid size strings are swallowed: arrays end up zero-length" classname="ShipTest" time="0.0"/>
   <testcase name="Null String direction throws IllegalArgumentException from setDirection(String)" classname="ShipTest" time="0.0"/>
-  <testcase name="isHit(): miss returns false and arrays unchanged" classname="ShipTest" time="0.001"/>
+  <testcase name="isHit(): miss returns false and arrays unchanged" classname="ShipTest" time="0.0"/>
   <system-out><![CDATA[java.lang.IllegalArgumentException: direction of the boat must be either a Boolean or string
 java.lang.IllegalArgumentException: size input is not contained in the string list not is it a valid String
 ]]></system-out>
