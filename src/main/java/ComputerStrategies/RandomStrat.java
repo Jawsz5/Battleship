@@ -32,4 +32,7 @@ public class RandomStrat {
        int y = spot / dimension;
        return new int[]{x, y};
    }
+   public void trackShot(boolean hit, int sunkLen, int x, int y){
+        return; //filler method to maintain consistency with other methods for the game loop
+   }
 }

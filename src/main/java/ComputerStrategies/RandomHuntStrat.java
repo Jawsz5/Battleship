@@ -69,4 +69,7 @@ public class RandomHuntStrat extends RandomStrat {
         return new int[]{0,7};
        
     }
+    public void trackShot(boolean hit, int sunkLen, int x, int y){
+        return; //filler method to maintain consistency with other methods for the game loop
+   }
 }

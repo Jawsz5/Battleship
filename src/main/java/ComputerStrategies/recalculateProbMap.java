@@ -2,9 +2,9 @@ package ComputerStrategies;
 
 public final class recalculateProbMap {
     private final int dim, nCells;
-    private final int[] prob;     // length = dim*dim
-    private final byte[] state;   // 0=unknown, 1=miss, 2=hit (length = dim*dim)
-    private final int[] remain = new int[6]; // remain[len] for len=2..5
+    private final int[] prob;
+    private final byte[] state;   // 0=unknown, 1=miss, 2=hit 
+    private final int[] remain = new int[6]; // reamining ship lengths, used to keep track of sunk ships
 
     public recalculateProbMap(int dimension) {
         this.dim = dimension;
@@ -18,15 +18,14 @@ public final class recalculateProbMap {
         recompute();
     }
 
-    // --- public API ---
+
 
     public void trackShot(boolean hit, int sunkLen, int x, int y) {
-        int id = idx(x, y);
+        int id = flatten(x, y);
         state[id] = hit ? (byte)2 : (byte)1;
         if (sunkLen >= 2 && sunkLen <= 5 && remain[sunkLen] > 0) {
             remain[sunkLen]--;  // actually remove one ship of that length
         }
-        // no caching here; we recompute on select
     }
 
     public int[] selectShot() {
@@ -43,20 +42,17 @@ public final class recalculateProbMap {
         return new int[]{ bestId % dim, bestId / dim };
     }
 
-    // --- core recomputation (flat arrays, cache-friendly) ---
-
     private void recompute() {
         java.util.Arrays.fill(prob, 0);
 
         for (int L = 2; L <= 5; L++) {
             int copies = remain[L];
-            if (copies <= 0) continue;
 
             // VERTICAL placements
             for (int x = 0; x < dim; x++) {
-                for (int y0 = 0; y0 <= dim - L; y0++) {
-                    int base = idx(x, y0);
-                    // check if any MISS in the L cells vertically
+                for (int y = 0; y <= dim - L; y++) {
+                    int base = flatten(x, y);
+                    // check if any miss in the L cells vertically
                     boolean blocked = false;
                     for (int p = base, k = 0; k < L; k++, p += dim) {
                         if (state[p] == 1) { blocked = true; break; }
@@ -69,11 +65,11 @@ public final class recalculateProbMap {
                 }
             }
 
-            // HORIZONTAL placements
+            // HORIZONTAL 
             for (int y = 0; y < dim; y++) {
                 int rowStart = y * dim;
-                for (int x0 = 0; x0 <= dim - L; x0++) {
-                    int base = rowStart + x0;
+                for (int x = 0; x <= dim - L; x++) {
+                    int base = rowStart + x;
                     boolean blocked = false;
                     for (int p = base, k = 0; k < L; k++, p++) {
                         if (state[p] == 1) { blocked = true; break; }
@@ -87,11 +83,10 @@ public final class recalculateProbMap {
         }
     }
 
-    // --- helpers ---
+    //convert 2d coordinates to 1d for speed improvment
+    private int flatten(int x, int y) { return y * dim + x; }
 
-    private int idx(int x, int y) { return y * dim + x; }
-
-    // Optional: for debugging
+    // for visual/debugging purposes
     public void printProb() {
         for (int y = 0; y < dim; y++) {
             int row = y * dim;
