@@ -1,0 +1,4 @@
+
+]java.lang.IllegalArgumentException: direction of the boat must be either a Boolean or string
+
+ljava.lang.IllegalArgumentException: size input is not contained in the string list not is it a valid String

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="OceanTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2025-08-24T20:30:50.406Z" hostname="Jazils-Computer-2.local" time="0.01">
+  <properties/>
+  <testcase name="isHit: true on boat cell, false on empty" classname="OceanTest" time="0.005"/>
+  <testcase name="Constructor rejects dim &lt;= 0 and &gt; 20" classname="OceanTest" time="0.001"/>
+  <testcase name="Constructor initializes an n×n grid of 'e'" classname="OceanTest" time="0.002"/>
+  <testcase name="placeRandomBoats: places all five boats; total filled cells == 17" classname="OceanTest" time="0.0"/>
+  <testcase name="addBoats: out-of-bounds throws (last index &gt;= dimension)" classname="OceanTest" time="0.0"/>
+  <testcase name="addBoats: horizontal then overlapping placement throws" classname="OceanTest" time="0.0"/>
+  <testcase name="addBoats: vertical 'destroyer' at (1,1) occupies (1,1),(1,2),(1,3)" classname="OceanTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

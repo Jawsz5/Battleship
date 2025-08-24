@@ -96,11 +96,12 @@ public class ProbabilityMapStrat {
     private final java.util.BitSet fired = new java.util.BitSet(); // cells already shot
 
     public void trackShot(boolean hit, int sunkLen, int x, int y) {
+        //System.out.println(hit + " " + sunkLen + "  " + x+","+y);
         int cell = flaten(x, y);
         fired.set(cell); // never pick this cell again
 
         // MISS: kill all candidates that cover (x,y)
-        if (!hit) {
+        if (hit == false) {
             int start = cellStart[cell], end = cellStart[cell + 1];
             for (int i = start; i < end; i++) {
                 int cid = cellIDs[i] & 0xFFFF;
@@ -109,20 +110,19 @@ public class ProbabilityMapStrat {
             return;
         }
 
-        // HIT but no sink: defer removals (keeps target-mode probabilities strong)
-        if (sunkLen < 0) return;
+        // Sunk boat remove the entire block for that ship length from the grid using shipTypeStart
+        if(sunkLen > 0){
+            for (int t = 0; t < shipTypeStart.length - 1; t++) {
+                int a = shipTypeStart[t], b = shipTypeStart[t + 1];
+                if ((candLength[a] & 0xFF) != sunkLen) continue;
 
-        // SINK: remove the entire block for that ship length using shipTypeStart
-        for (int t = 0; t < shipTypeStart.length - 1; t++) {
-            int a = shipTypeStart[t], b = shipTypeStart[t + 1];
-            if ((candLength[a] & 0xFF) != sunkLen) continue;
+                // skip if already removed
+                if (alive.nextSetBit(a) >= b) continue;
 
-            // skip if already removed
-            if (alive.nextSetBit(a) >= b) continue;
-
-            // clear all candidates of this sunk type (fast range clear)
-            alive.clear(a, b);
-            break; // only one ship of that length sunk
+                // clear all candidates of this sunk type (fast range clear)
+                alive.clear(a, b);
+                break; // only one ship of that length sunk
+            }
         }
     }
 
@@ -136,27 +136,27 @@ public class ProbabilityMapStrat {
         return c;
     }
 
-    // choose the best (x,y) based on current alive counts; skip fired cells
+    // choose the best shot (x,y) based on current alive counts; skip fired cells
     public int[] selectShot() {
         int bestCell = -1, bestScore = Integer.MIN_VALUE;
         for (int cell = 0; cell < nCells; cell++) {
-            if (fired.get(cell)) continue;              // don't re-fire
+            if (fired.get(cell)) continue;       
             int score = aliveCountAtCell(cell);
             if (score > bestScore) { bestScore = score; bestCell = cell; }
         }
         if (bestCell < 0) throw new IllegalStateException("No cells left");
 
-        /* 
-        System.out.println(bestCell%dim + " " + bestCell/dim);
+        
+        //System.out.println(bestCell%dim + " " + bestCell/dim);
         for(int i = 0; i < dim; i++){
             for(int j = 0; j < dim; j++){
-                System.out.print(aliveCountAtCell(flaten(i,j)) + " ");
+                //System.out.print(aliveCountAtCell(flaten(i,j)) + " ");
             }
-            System.out.println("\n");
+            //System.out.println("\n");
         }
-        System.out.println("\n\n\n\n");
-        */
-        // invert flaten(x,y) = y*dim + x
+        //System.out.println("\n\n\n\n");
+        
+        // invert flaten(x,y) = y*dim + x; for future reference, x and y are flipped in this project as y is column, x is row
         int x = bestCell % dim;
         int y = bestCell / dim;
         return new int[]{x, y};

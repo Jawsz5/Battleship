@@ -3,6 +3,7 @@ import java.util.Scanner;
 
 
 import ComputerStrategies.ProbabilityMapStrat;
+import ComputerStrategies.recalculateProbMap;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -17,6 +18,7 @@ public class Game{
    private int xShot, yShot;
    private boolean gameWon = false;
    private ArrayList<Ship> boats;
+   private int[] sunkBoatIDX = new int[]{1,1,1,1,1};
 
 
    public Game(int mapSize, int maxNumTurns){
@@ -114,20 +116,22 @@ public class Game{
    }
     public void playGameComputer() throws IOException{
         //RandomStrat r = new RandomStrat(dimension);
-        ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
+        //ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
+        recalculateProbMap r = new recalculateProbMap(dimension);
         for(int i = 0; i < dimension*dimension + 1; i++){
             if(playerOcean.isAllSunk()){gameWon = true;break;}
-        turnsPlayed += 1;
-        int[] shot = new int[2];
-        shot = r.selectShot();
-        shoot(shot[0], shot[1]);
-        int sunkBoatLength = 0;
-        for(Ship s: boats){
-            if(s.isSunk()){
-                sunkBoatLength = s.getBoatLength();
+            turnsPlayed += 1;
+            int[] shot = new int[2];
+            shot = r.selectShot();
+            shoot(shot[0], shot[1]);
+            int sunkBoatLength = 0;
+            for(int s = 0; s < boats.size(); s++){
+                if(boats.get(s).isSunk() && sunkBoatIDX[s] == 1){
+                    sunkBoatLength = boats.get(s).getBoatLength();
+                    sunkBoatIDX[s] = 0;
+                }
             }
-        }
-        r.trackShot(playerOcean.isHit(shot[0], shot[1]), sunkBoatLength, shot[0], shot[1]);
+            r.trackShot(playerOcean.isHit(shot[0], shot[1]), sunkBoatLength, shot[0], shot[1]);
         }
 
         if(!gameWon){throw new IOException("Strategy failed to complete the game");}
