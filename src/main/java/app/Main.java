@@ -29,6 +29,8 @@ public class Main {
   System.out.println(minturns);
   System.out.println(maxturns);
   System.out.println(hundreds);
+
+  System.out.println(100);
   
   
     
