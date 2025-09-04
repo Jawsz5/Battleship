@@ -1,11 +1,12 @@
 package GameFiles;
 import java.util.Scanner;
 
+import ComputerStrategies.ProbabilityMaps.ProbabilityMapStrat;
+import ComputerStrategies.ProbabilityMaps.recalculateProbMap;
+import ComputerStrategies.StandardStrats.CheckerBoardHuntStrat;
+import ComputerStrategies.StandardStrats.RandomHuntStrat;
+import ComputerStrategies.StandardStrats.RandomStrat;
 
-import ComputerStrategies.ProbabilityMapStrat;
-import ComputerStrategies.RandomHuntStrat;
-import ComputerStrategies.RandomStrat;
-import ComputerStrategies.recalculateProbMap;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -13,9 +14,8 @@ import java.util.ArrayList;
 
 
 public class Game{
-   private int maxTurns, turnsPlayed, dimension;
-   private char[][] hitMap;
-   //private char[][] grid;
+   private int maxTurns, turnsPlayed, dimension, nCells;
+   private char[] hitMap;
    private Ocean playerOcean;
    private int xShot, yShot;
    private boolean gameWon = false;
@@ -28,14 +28,12 @@ public class Game{
        catch(Exception e){System.out.println(e);}
        turnsPlayed = 0;
        dimension = mapSize;
+        nCells = mapSize*mapSize;
 
-
-       hitMap = new char[mapSize][mapSize];
+       hitMap = new char[nCells];
        //grid = playerOcean.getGrid();
-       for(int i = 0; i < mapSize; i++) {
-           for(int j = 0; j < mapSize; j++) {
-               hitMap[i][j] = '1'; // Initialize the hitMap with zeros
-           }
+       for(int i = 0; i < nCells; i++) {
+           hitMap[i] = '0';
        }
        if(maxNumTurns > mapSize * 10){throw new IllegalArgumentException("Max number of turns for the game must be less than 10x the dimension of the map");}
        maxTurns = maxNumTurns;
@@ -49,11 +47,11 @@ public class Game{
        if(y < 0 || y >= playerOcean.getDimension()){
            throw new IllegalArgumentException("Y-coordinate is out of bounds");
        }
-       if(hitMap[x][y] != '1'){
+       if(hitMap[10*x+y] != '0'){
            throw new IllegalArgumentException("Spot has already been shot at");
        }
        if(playerOcean.getGrid()[x][y] != 'e'){
-           hitMap[x][y] = 'X';
+           hitMap[10*x+y] = 'X';
            for(Ship s: boats){
                for(int i = 0; i < s.getSpotsX().length; i++){
                    if(s.getSpotsX()[i] == x && s.getSpotsY()[i] == y){
@@ -62,7 +60,7 @@ public class Game{
                    }
                }
            }
-       } else{hitMap[x][y] = 'O';}
+       } else{hitMap[10*x+y] = 'O';}
    }
    public void playGameOnTerminal_Human(){
        Scanner shotInput = new Scanner(System.in);
@@ -72,7 +70,7 @@ public class Game{
            //print out the board
            for(int j = 0; j < playerOcean.getDimension(); j++){
                for(int k = 0; k < playerOcean.getDimension(); k++){
-                   System.out.print(hitMap[j][k] + " ");
+                   System.out.print(hitMap[j*10+k] + " ");
                }
                System.out.println("\n");
            }
@@ -118,9 +116,10 @@ public class Game{
    }
     public void playGameComputer() throws IOException{
         //RandomStrat r = new RandomStrat(dimension);
-        //ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
+        ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
         //recalculateProbMap r = new recalculateProbMap(dimension);
-        RandomHuntStrat r = new RandomHuntStrat(dimension, playerOcean);
+        //RandomHuntStrat r = new RandomHuntStrat(dimension, playerOcean);
+        //CheckerBoardHuntStrat r = new CheckerBoardHuntStrat(dimension, playerOcean);
         for(int i = 0; i < dimension*dimension + 1; i++){
             if(playerOcean.isAllSunk()){gameWon = true;break;}
             turnsPlayed += 1;

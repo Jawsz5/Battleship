@@ -1,4 +1,4 @@
-package ComputerStrategies;
+package ComputerStrategies.ProbabilityMaps;
 
 
 //much faster version of the probability map strategy

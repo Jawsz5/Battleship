@@ -1,4 +1,4 @@
-package ComputerStrategies;
+package ComputerStrategies.StandardStrats;
 import GameFiles.Ocean;
 import GameFiles.Ship;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class RandomHuntStrat extends RandomStrat {
             }
         }   
 
-        while(!candidates.isEmpty()){
+        while(!candidates.isEmpty()){ 
             int[] candidate = candidates.remove(0);
             if(isAvailable(candidate[0], candidate[1])){
                 previousShot = candidate;
@@ -66,7 +66,7 @@ public class RandomHuntStrat extends RandomStrat {
 
         }
         //System.out.println("hi");
-        return new int[]{0,7};
+        return new int[]{x,y};
        
     }
     public void trackShot(boolean hit, int sunkLen, int x, int y){
