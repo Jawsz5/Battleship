@@ -1,17 +1,7 @@
-package GameFiles;
 import java.util.Scanner;
-
-import ComputerStrategies.ProbabilityMaps.ProbabilityMapStrat;
-import ComputerStrategies.ProbabilityMaps.recalculateProbMap;
-import ComputerStrategies.StandardStrats.CheckerBoardHuntStrat;
-import ComputerStrategies.StandardStrats.RandomHuntStrat;
-import ComputerStrategies.StandardStrats.RandomStrat;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
-
-
 
 public class Game{
    private int maxTurns, turnsPlayed, dimension, nCells;

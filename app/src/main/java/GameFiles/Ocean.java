@@ -1,4 +1,3 @@
-package GameFiles;
 import java.util.ArrayList;
 import java.util.Scanner;
 

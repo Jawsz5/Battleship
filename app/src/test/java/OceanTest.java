@@ -1,13 +1,3 @@
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-
-import GameFiles.Ocean;
-
-
-import static org.junit.jupiter.api.Assertions.*;
-
-
 class OceanTest{
 
     //constructor tests

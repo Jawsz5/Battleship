@@ -1,8 +1,3 @@
-package ComputerStrategies.StandardStrats;
-
-
-import GameFiles.Ocean;
-import GameFiles.Ship;
 import java.util.*;
 
 

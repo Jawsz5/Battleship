@@ -1,4 +1,3 @@
-package ComputerStrategies;
 
 //general hunt algorithm
 public class Hunt {

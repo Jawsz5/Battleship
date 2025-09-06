@@ -1,6 +1,3 @@
-package ComputerStrategies.StandardStrats;
-import GameFiles.Ocean;
-import GameFiles.Ship;
 import java.util.ArrayList;
 
 public class RandomHuntStrat extends RandomStrat {
