@@ -1,4 +1,9 @@
+package ComputerStrategies.StandardStrats;
+
 import java.util.ArrayList;
+
+import GameFiles.Ocean;
+import GameFiles.Ship;
 
 public class RandomHuntStrat extends RandomStrat {
     private Ocean hitTracker;

@@ -1,3 +1,5 @@
+package ComputerStrategies.ProbabilityMaps;
+
 
 public final class recalculateProbMap {
     private final int dim, nCells;

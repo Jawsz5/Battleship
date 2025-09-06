@@ -1,4 +1,8 @@
+package GameFiles;
+
 import java.util.Scanner;
+
+import ComputerStrategies.ProbabilityMaps.ProbabilityMapStrat;
 
 import java.io.IOException;
 import java.util.ArrayList;
