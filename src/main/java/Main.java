@@ -26,9 +26,7 @@ public class Main {
   System.out.println(minturns);
   System.out.println(maxturns);
   System.out.println(hundreds);
-  
-  
-    
+
     /* 
     try{
       int totalTurns = 0;
