@@ -1,5 +1,4 @@
-package GameFiles;
-
+package gamefiles;
 
 public class Ship{
    private int startx, starty;

@@ -1,9 +1,9 @@
-package ComputerStrategies.StandardStrats;
+package compstrategies.standardstrats;
 
 import java.util.*;
 
-import GameFiles.Ocean;
-import GameFiles.Ship;
+import gamefiles.Ocean;
+import gamefiles.Ship;
 
 
 public class CheckerBoardHuntStrat {

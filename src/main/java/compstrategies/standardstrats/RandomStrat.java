@@ -1,4 +1,4 @@
-package ComputerStrategies.StandardStrats;
+package compstrategies.standardstrats;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;

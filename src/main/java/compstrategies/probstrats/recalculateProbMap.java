@@ -1,4 +1,4 @@
-package ComputerStrategies.ProbabilityMaps;
+package compstrategies.probstrats;
 
 
 public final class recalculateProbMap {

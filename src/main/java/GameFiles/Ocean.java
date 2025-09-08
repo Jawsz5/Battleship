@@ -1,4 +1,4 @@
-package GameFiles;
+package gamefiles;
 
 import java.util.ArrayList;
 import java.util.Scanner;
