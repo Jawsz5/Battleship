@@ -1,32 +1,38 @@
 package compstrategies;
 
+import java.io.IOException;
+
 //general hunt algorithm
 public class Hunt {
     private boolean hunt, targeted;
     private int[] hitMap;
     private int previousShot, hitPos; //hitPos is the initial hit sqaure
-    private int dir = 0; //direction can be -2,-1,1,2 for right, down, up, and left
+    private boolean dir = true; //direction can be + or -
     public Hunt(int[] shotsFired){
         hitMap = shotsFired;
         targeted = false;
     }
-    private int shootAround(int pos){
+    private int shootAround(int pos) throws IOException{
         //position above the square is pos - 10
         //pos + 10 is below
         //pos to the right is +1
         //left is -1
         //returns a position around the intputted one that hasn't been shot yet
-        try{
-            if(hitMap[pos+10]==0) return hitMap[pos+10]; 
-            if(hitMap[pos-10]==0) return hitMap[pos-10];
-            if(hitMap[pos+1]==0) return hitMap[pos+1];
-            return hitMap[pos-1];
-        }catch( ArrayIndexOutOfBoundsException e){};
-        return -1;
+        int spotPicker = 0;
+        while(true){ //if an invalid position is picked, it will move on to the next
+            spotPicker ++;
+            try{
+                if(hitMap[pos+10]==0) return hitMap[pos+10]; 
+                if(hitMap[pos-10]==0) return hitMap[pos-10];
+                if(hitMap[pos+1]==0) return hitMap[pos+1];
+                return hitMap[pos-1];
+            }catch( ArrayIndexOutOfBoundsException e){};
+            if(spotPicker > 4){throw new IOException("No shots found around target");}
+        }
     }
     private boolean vertical(int pos){
         //vertical method is based on the first shootAround call, finding the direction that call was in
-        if(hitMap[pos+10]==1 || hitMap[pos-10]==1){
+        if(pos+10 == previousShot || pos-10==previousShot){
             return true;
         }
         return false;
@@ -35,12 +41,15 @@ public class Hunt {
         int shootPos = -1;
         boolean sunk = false;
         //while there isn't a hit, call shootAround
-        if(!targeted && previousShot == 0){
-            shootPos = shootAround(hitPos);
+        if(!targeted){
+            try{shootPos = shootAround(hitPos);}
+            catch(IOException e){}
             previousShot = shootPos;
         }
         //after shoot around, check to see if the square in the opposite direction is viable
-        // 
+        if(vertical(hitPos)){
+            
+        }
         
 
         

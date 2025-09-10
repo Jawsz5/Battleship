@@ -27,7 +27,6 @@ public class Main {
   System.out.println(maxturns);
   System.out.println(hundreds);
 
-  System.out.println("");
 
     /* 
     try{
