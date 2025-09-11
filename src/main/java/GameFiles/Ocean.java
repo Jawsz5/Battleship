@@ -5,23 +5,22 @@ import java.util.Scanner;
 
 
 public class Ocean{
-   private int dimension;
-   private char[][] grid;
+   private int dimension, nCells;
+   private char[] grid;
    private ArrayList<Ship> Boats = new ArrayList<Ship>();
    private String[] boatNames = new String[]{"aircraftcarrier", "battleship", "destroyer", "cruiser", "submarine"};
 
 
    public Ocean(int dim)throws Exception {
        dimension = dim;
+       nCells = dimension*dimension;
        if(dimension <= 0 || dimension > 20){ //arbitrary max map size of 20x20
            throw new IllegalArgumentException("Row and column must be greater than zero and less than or equal to 20");
        }
        else{
-           grid = new char[dimension][dimension];
-           for(int i = 0; i < dimension; i++) {
-               for(int j = 0; j < dimension; j++) {
-                   grid[i][j] = 'e'; // Initialize the grid with zeros
-               }
+           grid = new char[nCells];
+           for(int i = 0; i < nCells; i++) {   
+                grid[i] = 'e'; // Initialize the grid with zeros
            }
        }
    }
@@ -34,12 +33,12 @@ public class Ocean{
            throw new IllegalArgumentException("Boat is out of bounds.");
        }
        for(int i = 0; i < boatLength; i++){ //check if boat overlaps with another boat
-           if(grid[boatSpotX[i]][boatSpotY[i]] != 'e'){
+           if(grid[10*boatSpotX[i] + boatSpotY[i]] != 'e'){
                throw new IllegalArgumentException("Boat overlaps with another boat");
            }
        }
        for(int i = 0; i < boatLength; i ++){
-           grid[boatSpotX[i]][boatSpotY[i]] = s.getBoatType();
+           grid[10*boatSpotX[i] + boatSpotY[i]] = s.getBoatType();
        }
        Boats.add(s);
    }
@@ -86,7 +85,7 @@ public class Ocean{
 
    public Boolean isHit(int x, int y){
        //checks to see if a boat is on a sqaure
-       if(grid[x][y] != 'e'){
+       if(grid[10*x + y] != 'e'){
            return true;
        }
        return false;
@@ -101,7 +100,7 @@ public class Ocean{
    }
 
 
-   public char[][] getGrid(){return grid;}
+   public char[] getGrid(){return grid;}
    public ArrayList<Ship> getBoats(){return Boats;}
    public int getDimension(){return dimension;}
 }

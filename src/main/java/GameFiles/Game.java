@@ -44,7 +44,7 @@ public class Game{
        if(hitMap[10*x+y] != '0'){
            throw new IllegalArgumentException("Spot has already been shot at");
        }
-       if(playerOcean.getGrid()[x][y] != 'e'){
+       if(playerOcean.getGrid()[10*x + y] != 'e'){
            hitMap[10*x+y] = 'X';
            for(Ship s: boats){
                for(int i = 0; i < s.getSpotsX().length; i++){

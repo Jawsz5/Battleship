@@ -27,13 +27,11 @@ class OceanTest{
    void ctorInitializesGrid() throws Exception {
        Ocean o = new Ocean(10);
        assertEquals(10, o.getDimension());
-       char[][] g = o.getGrid();
-       assertEquals(10, g.length, "row count");
-       for (int r = 0; r < g.length; r++) {
-           assertEquals(10, g[r].length, "col count at row " + r);
-           for (int c = 0; c < g[r].length; c++) {
-               assertEquals('e', g[r][c], "grid[" + r + "][" + c + "] should be 'e'");
-           }
+       char[] g = o.getGrid();
+       assertEquals(10, g.length/10, "row count");
+       assertEquals(g.length/10, 10);
+       for(char i: g){
+        assertEquals(i, 'e');
        }
    }
 
@@ -48,10 +46,10 @@ class OceanTest{
        o.addBoats(1, 1, true, "destroyer"); // size 3, vertical → x constant, y increasing
 
 
-       char[][] g = o.getGrid();
-       assertEquals('d', g[1][1]);
-       assertEquals('d', g[1][2]);
-       assertEquals('d', g[1][3]);
+       char[] g = o.getGrid();
+       assertEquals('d', g[11]);
+       assertEquals('d', g[12]);
+       assertEquals('d', g[13]);
        assertEquals(1, o.getBoats().size(), "One boat should be stored");
    }
 
@@ -96,11 +94,11 @@ class OceanTest{
 
 
        assertEquals(5, o.getBoats().size(), "Five boats should be stored");
-       char[][] g = o.getGrid();
+       char[] g = o.getGrid();
        int filled = 0;
-       for (int r = 0; r < g.length; r++) {
-           for (int c = 0; c < g[r].length; c++) {
-               if (g[r][c] != 'e') filled++;
+       for (int r = 0; r < g.length/10; r++) {
+           for (int c = 0; c < g.length/10; c++) {
+               if (g[10*r+c] != 'e') filled++;
            }
        }
        // Sizes: 5 + 4 + 3 + 3 + 2 = 17 (no overlaps allowed)
