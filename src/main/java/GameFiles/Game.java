@@ -3,6 +3,8 @@ package gamefiles;
 import java.util.Scanner;
 
 import compstrategies.probstrats.ProbabilityMapStrat;
+import compstrategies.standardstrats.RandomHuntStrat;
+import compstrategies.standardstrats.RandomStrat;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -110,9 +112,9 @@ public class Game{
    }
     public void playGameComputer() throws IOException{
         //RandomStrat r = new RandomStrat(dimension);
-        ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
+        //ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
         //recalculateProbMap r = new recalculateProbMap(dimension);
-        //RandomHuntStrat r = new RandomHuntStrat(dimension, playerOcean);
+        RandomHuntStrat r = new RandomHuntStrat(dimension);
         //CheckerBoardHuntStrat r = new CheckerBoardHuntStrat(dimension, playerOcean);
         for(int i = 0; i < dimension*dimension + 1; i++){
             if(playerOcean.isAllSunk()){gameWon = true;break;}

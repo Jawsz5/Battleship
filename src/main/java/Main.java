@@ -10,7 +10,7 @@ public class Main {
   int avgturns = 0;
   int maxturns = 0;
   int hundreds = 0;
-  for(int i = 0; i < 100000; i++){
+  for(int i = 0; i < 1000; i++){
     try{
       int totalTurns = 0;
       Game g = new Game(10, 100);

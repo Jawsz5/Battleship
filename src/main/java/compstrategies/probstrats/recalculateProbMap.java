@@ -85,14 +85,14 @@ public final class recalculateProbMap {
     }
 
     //convert 2d coordinates to 1d for speed improvment
-    private int flatten(int x, int y) { return y * dim + x; }
+    private int flatten(int x, int y) { return x * dim + y; }
 
     // for visual/debugging purposes
     public void printProb() {
-        for (int y = 0; y < dim; y++) {
-            int row = y * dim;
-            for (int x = 0; x < dim; x++) {
-                System.out.printf("%3d", prob[row + x]);
+        for (int x = 0; x < dim; x++) {
+            int row = x * dim;
+            for (int y = 0; y < dim; y++) {
+                System.out.printf("%3d", prob[row + y]);
             }
             System.out.println();
         }

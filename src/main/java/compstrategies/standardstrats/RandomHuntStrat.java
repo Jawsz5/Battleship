@@ -1,77 +1,55 @@
 package compstrategies.standardstrats;
+import java.util.concurrent.ThreadLocalRandom;
 
-import java.util.ArrayList;
+import compstrategies.Hunt;
 
-import gamefiles.Ocean;
-import gamefiles.Ship;
-
-public class RandomHuntStrat extends RandomStrat {
-    private Ocean hitTracker;
-    private int[] previousShot;
-    private ArrayList<Ship> boats;
-    private ArrayList<int[]> candidates;
-
-    public RandomHuntStrat(int mapSize, Ocean o){
-        super(mapSize);
-        hitTracker = o;
-        boats = hitTracker.getBoats();
-        previousShot = super.selectShot();
-        //System.out.println(previousShot[0] + " and " + previousShot[1]);
-        candidates = new ArrayList<>();
-    }
-    
-    private void addCandidates(int x, int y){
-        int[][] directions = {{-1,0}, {1,0}, {0,-1}, {0,1}};
-        for(int[] d : directions){
-            int candidateX = x + d[0];
-            int candidateY = y + d[1];
-            if(candidateX >= 0 && candidateX < hitTracker.getDimension() &&
-               candidateY >= 0 && candidateY < hitTracker.getDimension() &&
-               isAvailable(candidateX, candidateY)) {
-                candidates.add(new int[]{candidateX, candidateY});
-            }
+public class RandomHuntStrat extends RandomStrat{
+    private int prevShot;
+    private int[] hitMap;
+    private int[] hitOneSurround = new int[]{10,-10,1,-1};
+    private boolean sunk = false, newHunt;
+    private Hunt h;
+    public RandomHuntStrat(int mapDim){
+        super(mapDim);
+        prevShot = -1;
+        hitMap = new int[nCells];
+        for(int i = 0; i < hitMap.length; i++){
+            hitMap[i] = 0;
         }
-    }
-
-    @Override
-    public int[] selectShot() {
-        int x = previousShot[0];
-        int y = previousShot[1];
-
-        if(hitTracker.isHit(x, y)){
-            for(Ship b : boats){
-                if(b.isHit(x, y)){
-                    if(b.isSunk()){
-                        candidates.clear();
-                    } else {
-                        addCandidates(x, y);
-                    }
-                    break;
-                }
-            }
-        }   
-
-        while(!candidates.isEmpty()){ 
-            int[] candidate = candidates.remove(0);
-            if(isAvailable(candidate[0], candidate[1])){
-                previousShot = candidate;
-                //removeSquare(candidate[0], candidate[1]);
-                //System.out.println(previousShot[0] + " and " + previousShot[1]);
-                return previousShot;
-            }
-        }
-
-        previousShot = super.selectShot();
-        if(isAvailable(previousShot[0], previousShot[1])){
-             //System.out.println(previousShot[0] + " and " + previousShot[1]);
-            return previousShot;
-
-        }
-        //System.out.println("hi");
-        return new int[]{x,y};
-       
     }
     public void trackShot(boolean hit, int sunkLen, int x, int y){
-        return; //filler method to maintain consistency with other methods for the game loop
-   }
+        prevShot = flatten(x,y);
+        sunk = (sunkLen != 0) ? true: false;
+        hitMap[prevShot] = hit ? 2: 1;
+    }
+    private int flatten(int x, int y){return 10*x + y;}
+
+    public int[] selectShot(){
+        if(notShotAtSpots.isEmpty()) throw new IllegalStateException("No squares left");
+        if(sunk){newHunt = true;} //only reset the hunt when a ship is sunk
+        if(prevShot != -1){
+            if(hitMap[prevShot] == 2 && newHunt){
+                h = new Hunt(prevShot); //only initialize a new hunt when 1 square on the boat is hit
+                newHunt = false;
+                for(int i: hitOneSurround){
+                    i = (hitMap[prevShot + i] == 2) ? 3: hitMap[prevShot];
+                }
+            }
+        
+            if(hitMap[prevShot] == 2){
+                //rest of the hunt
+                for(int i:hitOneSurround){
+                    if (i == 2){h.setTargetted(false);}
+                }
+                int shot = h.huntShip(hitMap);
+                return new int[]{shot/dim, shot%dim};
+            }
+        }
+        int idx  = ThreadLocalRandom.current().nextInt(notShotAtSpots.size());
+        prevShot = idx;
+        int shot = notShotAtSpots.remove(idx);
+        int x = shot / dim;
+        int y = shot % dim;
+        return new int[]{x, y};
+    }
 }
