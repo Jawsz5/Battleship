@@ -33,12 +33,12 @@ public class Ocean{
            throw new IllegalArgumentException("Boat is out of bounds.");
        }
        for(int i = 0; i < boatLength; i++){ //check if boat overlaps with another boat
-           if(grid[10*boatSpotX[i] + boatSpotY[i]] != 'e'){
+           if(grid[dimension*boatSpotX[i] + boatSpotY[i]] != 'e'){
                throw new IllegalArgumentException("Boat overlaps with another boat");
            }
        }
        for(int i = 0; i < boatLength; i ++){
-           grid[10*boatSpotX[i] + boatSpotY[i]] = s.getBoatType();
+           grid[dimension*boatSpotX[i] + boatSpotY[i]] = s.getBoatType();
        }
        Boats.add(s);
    }
@@ -85,7 +85,7 @@ public class Ocean{
 
    public Boolean isHit(int x, int y){
        //checks to see if a boat is on a sqaure
-       if(grid[10*x + y] != 'e'){
+       if(grid[dimension*x + y] != 'e'){
            return true;
        }
        return false;
