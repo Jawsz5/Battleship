@@ -49,7 +49,7 @@ public final class recalculateProbMap {
         for (int L = 2; L <= 5; L++) {
             int copies = remain[L];
 
-            // VERTICAL placements
+            // vertical placements
             for (int x = 0; x < dim; x++) {
                 for (int y = 0; y <= dim - L; y++) {
                     int base = flatten(x, y);
@@ -66,7 +66,7 @@ public final class recalculateProbMap {
                 }
             }
 
-            // HORIZONTAL 
+            // horizontal
             for (int y = 0; y < dim; y++) {
                 int rowStart = y * dim;
                 for (int x = 0; x <= dim - L; x++) {
