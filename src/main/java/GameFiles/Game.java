@@ -5,6 +5,7 @@ import java.util.Scanner;
 import compstrategies.probstrats.ProbabilityMapStrat;
 import compstrategies.standardstrats.RandomHuntStrat;
 import compstrategies.standardstrats.RandomStrat;
+import compstrategies.standardstrats.Parity;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,11 +44,11 @@ public class Game{
        if(y < 0 || y >= playerOcean.getDimension()){
            throw new IllegalArgumentException("Y-coordinate is out of bounds");
        }
-       if(hitMap[10*x+y] != '0'){
+       if(hitMap[dimension*x+y] != '0'){
            throw new IllegalArgumentException("Spot has already been shot at");
        }
-       if(playerOcean.getGrid()[10*x + y] != 'e'){
-           hitMap[10*x+y] = 'X';
+       if(playerOcean.getGrid()[dimension*x + y] != 'e'){
+           hitMap[dimension*x+y] = 'X';
            for(Ship s: boats){
                for(int i = 0; i < s.getSpotsX().length; i++){
                    if(s.getSpotsX()[i] == x && s.getSpotsY()[i] == y){
@@ -56,7 +57,7 @@ public class Game{
                    }
                }
            }
-       } else{hitMap[10*x+y] = 'O';}
+       } else{hitMap[dimension*x+y] = 'O';}
    }
    public void playGameOnTerminal_Human(){
        Scanner shotInput = new Scanner(System.in);
@@ -114,8 +115,8 @@ public class Game{
         //RandomStrat r = new RandomStrat(dimension);
         //ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
         //recalculateProbMap r = new recalculateProbMap(dimension);
-        RandomHuntStrat r = new RandomHuntStrat(dimension);
-        //CheckerBoardHuntStrat r = new CheckerBoardHuntStrat(dimension, playerOcean);
+        // RandomHuntStrat r = new RandomHuntStrat(dimension);
+        Parity r = new Parity(dimension);
         for(int i = 0; i < dimension*dimension + 1; i++){
             if(playerOcean.isAllSunk()){gameWon = true;break;}
             turnsPlayed += 1;

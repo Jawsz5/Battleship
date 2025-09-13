@@ -1,38 +1,57 @@
 package compstrategies.standardstrats;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import compstrategies.Hunt;
 
-public class RandomHuntStrat extends RandomStrat {
+public class Parity extends RandomStrat {
     private int[] hitMap;
     private Hunt h;
     private List<Integer> remainingShipLengths;
+    private List<Integer> huntSquares;
 
-    public RandomHuntStrat(int mapDim) {
+    public Parity(int mapDim) {
         super(mapDim);
         hitMap = new int[nCells];
         for (int i = 0; i < nCells; i++) hitMap[i] = 0;
 
-        // Track standard ship lengths internally
+        // Standard ship lengths
         remainingShipLengths = new ArrayList<>();
         remainingShipLengths.add(5);
         remainingShipLengths.add(4);
         remainingShipLengths.add(3);
         remainingShipLengths.add(3);
         remainingShipLengths.add(2);
+
+        // Checkerboard squares
+        huntSquares = new ArrayList<>();
+        for (int x = 0; x < dim; x++) {
+            for (int y = 0; y < dim; y++) {
+                if ((x + y) % 2 == 0) huntSquares.add(flatten(x, y));
+            }
+        }
+        Collections.shuffle(huntSquares);
     }
 
     private int flatten(int x, int y) { return dim * x + y; }
+
+    private boolean canFitShip(int pos) {
+        int row = pos / dim;
+        int col = pos % dim;
+        for (int len : remainingShipLengths) {
+            if (len <= dim - col || len <= dim - row) return true;
+        }
+        return false;
+    }
 
     public void trackShot(boolean hit, int sunkLen, int x, int y) {
         int pos = flatten(x, y);
         hitMap[pos] = hit ? 2 : 1;
 
         if (hit && h == null) {
-            // Start hunt immediately on first hit
-            h = new Hunt(pos, dim);
+            h = new Hunt(pos, dim); // enter Hunt mode
         }
 
         if (sunkLen != 0) {
@@ -54,43 +73,32 @@ public class RandomHuntStrat extends RandomStrat {
                     shot = h.huntShip(hitMap);
                     if (shot >= 0 && shot < hitMap.length && hitMap[shot] == 0) {
                         hitMap[shot] = 1;
-                        notShotAtSpots.remove(Integer.valueOf(shot));
+                        huntSquares.remove(Integer.valueOf(shot));
                         return new int[]{shot / dim, shot % dim};
                     }
                 }
             } catch (Exception e) {
-                h = null; // fallback to random if hunt fails
+                h = null; // fallback to parity hunt if Hunt fails
             }
         }
 
-        // Random mode: filter impossible positions
-        if (notShotAtSpots.isEmpty()) throw new IllegalStateException("No squares left");
+        // Optimized parity hunt: pick only squares that can fit remaining ships
         List<Integer> candidates = new ArrayList<>();
-
-        for (int pos : notShotAtSpots) {
-            int row = pos / dim;
-            int col = pos % dim;
-            boolean canFit = false;
-
-            for (int len : remainingShipLengths) {
-                if (len <= dim - col || len <= dim - row) { // horizontal or vertical fit
-                    canFit = true;
-                    break;
-                }
-            }
-
-            if (canFit) candidates.add(pos);
+        for (int pos : huntSquares) {
+            if (hitMap[pos] == 0 && canFitShip(pos)) candidates.add(pos);
         }
-
-        if (candidates.isEmpty()) candidates = new ArrayList<>(notShotAtSpots);
+        if (candidates.isEmpty()) {
+            // fallback to any remaining unhit square
+            for (int i = 0; i < hitMap.length; i++) {
+                if (hitMap[i] == 0) candidates.add(i);
+            }
+        }
 
         int idx = ThreadLocalRandom.current().nextInt(candidates.size());
         shot = candidates.get(idx);
-        notShotAtSpots.remove(Integer.valueOf(shot));
+        huntSquares.remove(Integer.valueOf(shot));
         hitMap[shot] = 1;
 
         return new int[]{shot / dim, shot % dim};
     }
 }
-
-

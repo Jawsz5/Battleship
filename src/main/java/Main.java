@@ -22,7 +22,7 @@ public class Main {
       if(totalTurns == 100){hundreds++;}
     }catch(Exception e){e.printStackTrace();}
   }
-  System.out.println(avgturns/100000);
+  System.out.println(avgturns/1000);
   System.out.println(minturns);
   System.out.println(maxturns);
   System.out.println(hundreds);
