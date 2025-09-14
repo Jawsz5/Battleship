@@ -2,12 +2,11 @@ package gamefiles;
 
 import java.util.Scanner;
 
+import compstrategies.Parity;
 import compstrategies.probstrats.ProbabilityMapStrat;
 import compstrategies.probstrats.recalculateProbMap;
 import compstrategies.standardstrats.RandomHuntStrat;
 import compstrategies.standardstrats.RandomStrat;
-import compstrategies.standardstrats.Parity;
-
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -115,10 +114,10 @@ public class Game{
    }
     public void playGameComputer() throws IOException{
         //RandomStrat r = new RandomStrat(dimension);
-        ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
+        //ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
         //recalculateProbMap r = new recalculateProbMap(dimension);
-        // RandomHuntStrat r = new RandomHuntStrat(dimension);
-        //Parity r = new Parity(dimension);
+        //RandomHuntStrat r = new RandomHuntStrat(dimension);
+        Parity r = new Parity(dimension);
         for(int i = 0; i < dimension*dimension + 1; i++){
             if(playerOcean.isAllSunk()){gameWon = true;break;}
             turnsPlayed += 1;

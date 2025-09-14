@@ -1,10 +1,11 @@
-package compstrategies.standardstrats;
+package compstrategies;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import compstrategies.Hunt;
+
+import compstrategies.standardstrats.RandomStrat;
 
 public class Parity extends RandomStrat {
     private int[] hitMap;
