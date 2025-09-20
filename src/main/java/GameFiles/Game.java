@@ -68,7 +68,7 @@ public class Game{
            //print out the board
            for(int j = 0; j < playerOcean.getDimension(); j++){
                for(int k = 0; k < playerOcean.getDimension(); k++){
-                   System.out.print(hitMap[j*10+k] + " ");
+                   System.out.print(hitMap[j*dimension+k] + " ");
                }
                System.out.println("\n");
            }
@@ -113,11 +113,11 @@ public class Game{
        shotInput.close();
    }
     public void playGameComputer() throws IOException{
-        //RandomStrat r = new RandomStrat(dimension);
-        //ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
-        //recalculateProbMap r = new recalculateProbMap(dimension);
-        //RandomHuntStrat r = new RandomHuntStrat(dimension);
-        Parity r = new Parity(dimension);
+        RandomStrat k = new RandomStrat(dimension);
+        ProbabilityMapStrat l = new ProbabilityMapStrat(dimension);
+        recalculateProbMap r = new recalculateProbMap(dimension);
+        RandomHuntStrat m = new RandomHuntStrat(dimension);
+        Parity n = new Parity(dimension);
         for(int i = 0; i < dimension*dimension + 1; i++){
             if(playerOcean.isAllSunk()){gameWon = true;break;}
             turnsPlayed += 1;
@@ -125,13 +125,32 @@ public class Game{
             shot = r.selectShot();
             shoot(shot[0], shot[1]);
             int sunkBoatLength = 0;
-            for(int s = 0; s < boats.size(); s++){
-                if(boats.get(s).isSunk() && sunkBoatIDX[s] == 1){
+            int[] sunkCells = null;
+            for (int s = 0; s < boats.size(); s++) {
+                if (boats.get(s).isSunk() && sunkBoatIDX[s] == 1) {
                     sunkBoatLength = boats.get(s).getBoatLength();
                     sunkBoatIDX[s] = 0;
+
+                    int[] sx = boats.get(s).getSaveSpotsX();
+                    int[] sy = boats.get(s).getSaveSpotsY();
+
+                    int cnt = 0;
+                    for (int z = 0; z < sx.length; z++) if (sx[z] >= 0 && sy[z] >= 0) cnt++;
+                    sunkCells = new int[cnt];
+                    int idx = 0;
+                    for (int z = 0; z < sx.length; z++) {
+                        if (sx[z] >= 0 && sy[z] >= 0) sunkCells[idx++] = sx[z] * dimension + sy[z];
+                    }
+                    break; // only one new sink per shot
                 }
             }
-            r.trackShot(playerOcean.isHit(shot[0], shot[1]), sunkBoatLength, shot[0], shot[1]);
+            r.trackShot(playerOcean.isHit(shot[0], shot[1]), sunkBoatLength, shot[0], shot[1], sunkCells);
+            /* 
+            r.printProb();
+            System.out.println("\n\n");
+            r.printShots();
+            System.out.println("\n\n");
+            */
         }
 
         if(!gameWon){throw new IOException("Strategy failed to complete the game");}

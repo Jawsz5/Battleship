@@ -95,7 +95,7 @@ public class ProbabilityMapStrat {
 
     private final java.util.BitSet fired = new java.util.BitSet(); // cells already shot
 
-    public void trackShot(boolean hit, int sunkLen, int x, int y) {
+    public void trackShot(boolean hit, int sunkLen, int x, int y, int[] sunkCells) {
         //System.out.println(hit + " " + sunkLen + "  " + x+","+y);
         int cell = flaten(x, y);
         fired.set(cell); // never pick this cell again

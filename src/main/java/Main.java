@@ -10,7 +10,7 @@ public class Main {
   int avgturns = 0;
   int maxturns = 0;
   int hundreds = 0;
-  for(int i = 0; i < 1000; i++){
+  for(int i = 0; i < 100000; i++){
     try{
       int totalTurns = 0;
       Game g = new Game(10, 100);
@@ -22,7 +22,7 @@ public class Main {
       if(totalTurns == 100){hundreds++;}
     }catch(Exception e){e.printStackTrace();}
   }
-  System.out.println(avgturns/1000);
+  System.out.println(avgturns/100000);
   System.out.println(minturns);
   System.out.println(maxturns);
   System.out.println(hundreds);

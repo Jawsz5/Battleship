@@ -5,7 +5,7 @@ public class Ship{
    private char boatType;
    private int boatSize;
    private Boolean isVertical, isAHit;
-   private int[] spotsX, spotsY;
+   private int[] spotsX, spotsY, saveSpotsX, saveSpotsY;
    //initialize ship position
     //overload the constructor to allow different kinds of input
     public Ship(int x, int y, Boolean vertical, String s){
@@ -31,13 +31,19 @@ public class Ship{
    private void populateSpots(int size, int x, int y){
        spotsX = new int[size];
        spotsY = new int[size];
+       saveSpotsX = new int[size];
+       saveSpotsY = new int[size];
        for(int i = 0; i < spotsX.length; i++){
            if(isVertical){
                spotsX[i] = x;
+               saveSpotsX[i] = x;
                spotsY[i] = y + i;
+               saveSpotsY[i] = y + i;
            } else{
                spotsX[i] = x + i;
+               saveSpotsX[i] = x + i;
                spotsY[i] = y;
+               saveSpotsY[i] = y;
            }
        }
    }
@@ -97,6 +103,8 @@ public class Ship{
    //get methods
    public int[] getSpotsX(){return spotsX;}
    public int[] getSpotsY(){return spotsY;}
+   public int[] getSaveSpotsX(){return saveSpotsX;}
+   public int[] getSaveSpotsY(){return saveSpotsY;}
    public int getX(){return startx;}
    public int getY(){return starty;}
    public char getBoatType(){return boatType;}
