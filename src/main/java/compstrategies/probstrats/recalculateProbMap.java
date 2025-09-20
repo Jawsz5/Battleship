@@ -1,11 +1,13 @@
 package compstrategies.probstrats;
 
+import compstrategies.Hunt;
 
 public final class recalculateProbMap {
     private final int dim, nCells;
     private final int[] prob;
-    private final byte[] hitMap;   // 0=unknown, 1=miss, 2=hit, 3 for all hits on a sunk boat
-    private final int[] remain = new int[6]; // reamining ship lengths, used to keep track of sunk ships
+    private final byte[] hitMap;   // 0=unknown, 1=miss, 2=hit, 3 for sunk
+    private final int[] remain = new int[6]; // remaining ship lengths
+    private Hunt h;                 // Hunt mode object
 
     public recalculateProbMap(int dimension) {
         this.dim = dimension;
@@ -19,24 +21,51 @@ public final class recalculateProbMap {
         recompute();
     }
 
-
-
     public void trackShot(boolean hit, int sunkLen, int x, int y, int[] sunkCells) {
         int id = flatten(x, y);
         hitMap[id] = hit ? (byte)2 : (byte)1;
-    
+
+        if (hit) {
+            if (h == null) {
+                h = new Hunt(id, dim); // start Hunt mode
+            }
+            h.registerHit(id, hitMap);
+        }
+
         if (hit && sunkLen > 1 && sunkLen < 6 && remain[sunkLen] > 0 && sunkCells != null) {
             remain[sunkLen]--;
-            int limit = Math.min(sunkLen, sunkCells.length);   // <-- use only the actual sunk length
+            int limit = Math.min(sunkLen, sunkCells.length);
             for (int k = 0; k < limit; k++) {
                 int cid = sunkCells[k];
-                hitMap[cid] = 3; // block only valid ids
+                hitMap[cid] = 3; // mark sunk cells
+            }
+
+            if (h != null) {
+                h.reset();
+                h = null; // exit hunt mode once ship is sunk
             }
         }
     }
-    
 
     public int[] selectShot() {
+        int shot = -1;
+
+        // Hunt mode first
+        if (h != null) {
+            try {
+                while (true) {
+                    shot = h.huntShip(hitMap);
+                    if (shot >= 0 && shot < hitMap.length && hitMap[shot] == 0) {
+                        hitMap[shot] = 1; // mark as attempted
+                        return new int[]{shot / dim, shot % dim};
+                    }
+                }
+            } catch (Exception e) {
+                h = null; // fallback if Hunt fails
+            }
+        }
+
+        // Probability mode
         recompute();
         int bestId = -1, bestScore = Integer.MIN_VALUE;
         for (int id = 0; id < nCells; id++) {
@@ -45,26 +74,25 @@ public final class recalculateProbMap {
             if (s > bestScore) { bestScore = s; bestId = id; }
         }
         if (bestId < 0) throw new IllegalStateException("No cells left to fire at");
+        hitMap[bestId] = 1; // mark as attempted
         return new int[]{ bestId / dim, bestId % dim }; // (row, col)
-    }    
-    
+    }
 
     private void recompute() {
         java.util.Arrays.fill(prob, 0);
 
         for (int L = 2; L <= 5; L++) {
             int copies = remain[L];
+            if (copies == 0) continue;
 
             // vertical placements
             for (int y = 0; y < dim; y++) {
                 for (int x = 0; x <= dim - L; x++) {
                     int base = flatten(x,y);
-                    // check if any miss in the L cells vertically
                     boolean blocked = false;
                     for (int p = base, k = 0; k < L; k++, p += dim) {
                         if (hitMap[p] == 1 || hitMap[p] == 3) {blocked = true; break;}
                     }
-                    // add score to unknown cells only
                     if (!blocked){
                         for (int p = base, k = 0; k < L; k++, p += dim) {
                             if (hitMap[p] == 0) prob[p] += copies;
@@ -91,10 +119,8 @@ public final class recalculateProbMap {
         }
     }
 
-    //convert 2d coordinates to 1d for speed improvment
     private int flatten(int x, int y) { return x * dim + y; }
 
-    // for visual/debugging purposes
     public void printProb() {
         for (int x = 0; x < dim; x++) {
             int row = x * dim;
@@ -105,6 +131,7 @@ public final class recalculateProbMap {
         }
         System.out.println();
     }
+
     public void printShots(){
         for (int x = 0; x < dim; x++) {
             int row = x * dim;
@@ -115,5 +142,5 @@ public final class recalculateProbMap {
         }
         System.out.println();
     }
-
 }
+

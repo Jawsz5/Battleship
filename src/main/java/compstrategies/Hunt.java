@@ -1,73 +1,150 @@
 package compstrategies;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+* Hunt mode: triggered when a hit is found.
+* This class tries to extend in both directions along
+* a line until the ship is sunk.
+*/
 public class Hunt {
-    private int dim;
-    private int lastShot = -1;
-    private boolean horizontal = false;
-    private boolean orientationKnown = false;
-    private Queue<Integer> targetQueue;
+   private int dim;
+   private int origin;             // first hit cell
+   private List<Integer> frontier; // candidate squares
+   private boolean oriented;       // true once direction is determined
 
-    public Hunt(int hitOne, int dim) {
-        this.dim = dim;
-        this.targetQueue = new LinkedList<>();
-        // Initially, add only valid neighbors
-        int row = hitOne / dim;
-        int col = hitOne % dim;
-        if (row + 1 < dim) targetQueue.add(hitOne + dim);
-        if (row - 1 >= 0) targetQueue.add(hitOne - dim);
-        if (col + 1 < dim) targetQueue.add(hitOne + 1);
-        if (col - 1 >= 0) targetQueue.add(hitOne - 1);
-        lastShot = hitOne;
-    }
 
-    public int huntShip(int[] hitMap) throws IOException {
-        while (!targetQueue.isEmpty()) {
-            int next = targetQueue.poll();
-            if (next < 0 || next >= hitMap.length) continue;
-            if (hitMap[next] != 0) continue;
+   public Hunt(int startPos, int dim) {
+       this.dim = dim;
+       this.origin = startPos;
+       this.frontier = new ArrayList<>();
+       this.oriented = false;
 
-            int rowDiff = Math.abs(next / dim - lastShot / dim);
-            int colDiff = Math.abs(next % dim - lastShot % dim);
 
-            // Determine orientation immediately if possible
-            if (!orientationKnown) {
-                if (rowDiff == 0 && colDiff == 1) horizontal = true;
-                else if (rowDiff == 1 && colDiff == 0) horizontal = false;
-                orientationKnown = true;
-            }
+       // start with neighbors of the first hit
+       addNeighbors(startPos);
+   }
 
-            lastShot = next;
 
-            // Extend in line first
-            if (orientationKnown) {
-                int forward = horizontal ? next + 1 : next + dim;
-                int backward = horizontal ? next - 1 : next - dim;
+   private void addNeighbors(int pos) {
+       int row = pos / dim;
+       int col = pos % dim;
 
-                if (forward >= 0 && forward < hitMap.length && hitMap[forward] == 0) targetQueue.add(forward);
-                else if (backward >= 0 && backward < hitMap.length && hitMap[backward] == 0) targetQueue.add(backward);
-            } else {
-                // continue exploring adjacent hits if orientation unknown
-                int row = next / dim;
-                int col = next % dim;
-                if (row + 1 < dim && hitMap[next + dim] == 0) targetQueue.add(next + dim);
-                if (row - 1 >= 0 && hitMap[next - dim] == 0) targetQueue.add(next - dim);
-                if (col + 1 < dim && hitMap[next + 1] == 0) targetQueue.add(next + 1);
-                if (col - 1 >= 0 && hitMap[next - 1] == 0) targetQueue.add(next - 1);
-            }
 
-            return next;
-        }
+       if (row > 0) frontier.add((row - 1) * dim + col);
+       if (row < dim - 1) frontier.add((row + 1) * dim + col);
+       if (col > 0) frontier.add(row * dim + (col - 1));
+       if (col < dim - 1) frontier.add(row * dim + (col + 1));
+   }
 
-        throw new IOException("No valid shots left in Hunt mode");
-    }
 
-    public void reset() {
-        targetQueue.clear();
-        lastShot = -1;
-        orientationKnown = false;
-    }
+   /** Reset when ship is sunk */
+   public void reset() {
+       frontier.clear();
+       oriented = false;
+   }
+
+
+   /**
+    * Choose next shot in Hunt mode.
+    * Extends in both directions when orientation is known.
+    */
+   public int huntShip(byte[] hitMap) throws Exception {
+       if (frontier.isEmpty()) throw new Exception("No hunt candidates");
+
+
+       // Pick the next candidate
+       int pos = frontier.remove(0);
+
+
+       // Skip if already shot
+       if (hitMap[pos] != 0) return huntShip(hitMap);
+
+
+       return pos;
+   }
+
+
+   /**
+    * After a hit is confirmed, call this to extend hunt.
+    */
+   public void registerHit(int pos, byte[] hitMap) {
+       int row = pos / dim;
+       int col = pos % dim;
+
+
+       // Determine orientation if possible
+       if (!oriented) {
+           if (Math.abs((origin / dim) - row) == 1 && (origin % dim) == col) {
+               oriented = true; // vertical
+               extendVertical(origin, hitMap);
+               extendVertical(pos, hitMap);
+           } else if (Math.abs((origin % dim) - col) == 1 && (origin / dim) == row) {
+               oriented = true; // horizontal
+               extendHorizontal(origin, hitMap);
+               extendHorizontal(pos, hitMap);
+           } else {
+               // still unknown: just add neighbors
+               addNeighbors(pos);
+           }
+       } else {
+           // orientation known, extend along that line
+           if ((origin / dim) == row) {
+               extendHorizontal(pos, hitMap);
+           } else if ((origin % dim) == col) {
+               extendVertical(pos, hitMap);
+           }
+       }
+   }
+
+
+   private void extendHorizontal(int pos, byte[] hitMap) {
+       int row = pos / dim;
+       int col = pos % dim;
+
+
+       // extend left
+       for (int c = col - 1; c >= 0; c--) {
+           int idx = row * dim + c;
+           if (hitMap[idx] == 1) break; // miss encountered
+           if (hitMap[idx] == 0) frontier.add(idx);
+           if (hitMap[idx] == 2) continue; // already hit, keep going
+       }
+
+
+       // extend right
+       for (int c = col + 1; c < dim; c++) {
+           int idx = row * dim + c;
+           if (hitMap[idx] == 1) break;
+           if (hitMap[idx] == 0) frontier.add(idx);
+           if (hitMap[idx] == 2) continue;
+       }
+   }
+
+
+   private void extendVertical(int pos, byte[] hitMap) {
+       int row = pos / dim;
+       int col = pos % dim;
+
+
+       // extend up
+       for (int r = row - 1; r >= 0; r--) {
+           int idx = r * dim + col;
+           if (hitMap[idx] == 1) break;
+           if (hitMap[idx] == 0) frontier.add(idx);
+           if (hitMap[idx] == 2) continue;
+       }
+
+
+       // extend down
+       for (int r = row + 1; r < dim; r++) {
+           int idx = r * dim + col;
+           if (hitMap[idx] == 1) break;
+           if (hitMap[idx] == 0) frontier.add(idx);
+           if (hitMap[idx] == 2) continue;
+       }
+   }
 }

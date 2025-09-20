@@ -24,6 +24,6 @@ public class RandomStrat {
         return new int[]{x, y};
     }
     //filler method to maintain consistency with other strats for the game loop
-    public void trackShot(boolean hit, int sunkLen, int x, int y){}
+    public void trackShot(boolean hit, int sunkLen, int x, int y, int[] sunkCells){}
     
 }

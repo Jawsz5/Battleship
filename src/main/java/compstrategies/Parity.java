@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-
+import compstrategies.Hunt;
 import compstrategies.standardstrats.RandomStrat;
 
 public class Parity extends RandomStrat {
-    private int[] hitMap;
-    private Hunt h;
+    private byte[] hitMap;                // 0 = unknown, 1 = miss, 2 = hit
+    private Hunt h;                       // Hunt mode object
     private List<Integer> remainingShipLengths;
-    private List<Integer> huntSquares;
+    private List<Integer> huntSquares;    // parity squares
 
     public Parity(int mapDim) {
         super(mapDim);
-        hitMap = new int[nCells];
+        hitMap = new byte[nCells];
         for (int i = 0; i < nCells; i++) hitMap[i] = 0;
 
         // Standard ship lengths
@@ -47,12 +47,17 @@ public class Parity extends RandomStrat {
         return false;
     }
 
-    public void trackShot(boolean hit, int sunkLen, int x, int y) {
+    @Override
+    public void trackShot(boolean hit, int sunkLen, int x, int y, int[] sunkCells) {
         int pos = flatten(x, y);
-        hitMap[pos] = hit ? 2 : 1;
+        hitMap[pos] = (byte) (hit ? 2 : 1);
 
-        if (hit && h == null) {
-            h = new Hunt(pos, dim); // enter Hunt mode
+        if (hit) {
+            if (h == null) {
+                h = new Hunt(pos, dim); // enter Hunt mode
+            }
+            // Tell Hunt about this hit so it can extend aggressively
+            h.registerHit(pos, hitMap);
         }
 
         if (sunkLen != 0) {
@@ -64,22 +69,23 @@ public class Parity extends RandomStrat {
         }
     }
 
+    @Override
     public int[] selectShot() {
         int shot = -1;
 
-        // Hunt mode
+        // Hunt mode first
         if (h != null) {
             try {
                 while (true) {
                     shot = h.huntShip(hitMap);
                     if (shot >= 0 && shot < hitMap.length && hitMap[shot] == 0) {
-                        hitMap[shot] = 1;
+                        hitMap[shot] = 1; // mark as attempted
                         huntSquares.remove(Integer.valueOf(shot));
                         return new int[]{shot / dim, shot % dim};
                     }
                 }
             } catch (Exception e) {
-                h = null; // fallback to parity hunt if Hunt fails
+                h = null; // fallback if Hunt fails
             }
         }
 
