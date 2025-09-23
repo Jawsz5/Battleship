@@ -1,56 +1,47 @@
 package gamefiles;
 
 public class Ship{
-   private int startx, starty;
+   private int startPos;
    private char boatType;
    private int boatSize;
    private Boolean isVertical, isAHit;
-   private int[] spotsX, spotsY, saveSpotsX, saveSpotsY;
+   private int[] spots, saveSpots;
    //initialize ship position
     //overload the constructor to allow different kinds of input
-    public Ship(int x, int y, Boolean vertical, String s){
-       this.setXY(x,y);
+    public Ship(int pos, Boolean vertical, String s){
+       this.setPos(pos);
        try{setDirection(vertical);}catch(IllegalArgumentException e){
            System.out.println(e);
        }
        try{setSize(s);}catch(IllegalArgumentException e){
            System.out.println(e);
        }
-       populateSpots(boatSize, x, y);
+       populateSpots(boatSize, pos);
    }
-   public Ship(int x, int y, String vertical, String s){
-       this.setXY(x,y);
+   public Ship(int pos, String vertical, String s){
+       this.setPos(pos);
        setDirection(vertical);
        try{setSize(s);}catch(IllegalArgumentException e){
            System.out.println(e);
        }
-       populateSpots(boatSize, x, y);
+       populateSpots(boatSize, pos);
    }
 
 
-   private void populateSpots(int size, int x, int y){
-       spotsX = new int[size];
-       spotsY = new int[size];
-       saveSpotsX = new int[size];
-       saveSpotsY = new int[size];
-       for(int i = 0; i < spotsX.length; i++){
-           if(isVertical){
-               spotsX[i] = x;
-               saveSpotsX[i] = x;
-               spotsY[i] = y + i;
-               saveSpotsY[i] = y + i;
-           } else{
-               spotsX[i] = x + i;
-               saveSpotsX[i] = x + i;
-               spotsY[i] = y;
-               saveSpotsY[i] = y;
-           }
+   private void populateSpots(int size, int pos){
+       spots = new int[size];
+       saveSpots = new int[size];
+       int step = isVertical ? 10: 1;
+       for(int i = 0; i < size; i++){
+            int id = pos + i * step;
+            spots[i] = id;
+            saveSpots[i] = id;
        }
    }
 
 
-   private void setXY(int x, int y)throws IllegalArgumentException{
-       startx = x; starty = y;
+   private void setPos(int pos)throws IllegalArgumentException{
+       startPos = pos;
    }
    private void setSize(String s) throws IllegalArgumentException{
        if (s == null){
@@ -101,12 +92,9 @@ public class Ship{
 
 
    //get methods
-   public int[] getSpotsX(){return spotsX;}
-   public int[] getSpotsY(){return spotsY;}
-   public int[] getSaveSpotsX(){return saveSpotsX;}
-   public int[] getSaveSpotsY(){return saveSpotsY;}
-   public int getX(){return startx;}
-   public int getY(){return starty;}
+   public int[] getSpots(){return spots;}
+   public int[] getSaveSpots(){return saveSpots;}
+   public int getPos(){return startPos;}
    public char getBoatType(){return boatType;}
    public String getBoatName(){
        String[] boatTypeToName = new String[]{"aircraft carrier", "battleship", "destroyer", "cruiser", "submarine"};
@@ -128,43 +116,26 @@ public class Ship{
     }
 
    //hit tracking
-   public Boolean isHit(int x, int y) throws IllegalArgumentException{
-       if(x != (int)x || y != (int)y){
+   public Boolean isHit(int pos) throws IllegalArgumentException{
+       if(pos != (int)pos){
            throw new IllegalArgumentException("Input coordinates must be integers");
        }
-       hit(x,y);
+       hit(pos);
        return isAHit;
    }
-   public void hit(int x, int y) throws IllegalArgumentException{
-       if(x != (int)x || y != (int)y){
-           throw new IllegalArgumentException("Input coordinates must be integers");
-       }
-       // if the x and y coordinates fall on the boat
-       Boolean hitX = false;
-       Boolean hitY = false;
-       // the value of the position on the boat that is hit. Ie: 1st, 2nd, 3rd
-       int shotX = 0;
-       int shotY = 0;
-       for(int i = 0; i < spotsX.length; i++){
-           if(x == spotsX[i]){hitX = true; shotX = i;}
-       }
-       for(int i = 0; i < spotsY.length; i++){
-           if(y == spotsY[i]){hitY = true; shotY = i;}
-       }
-       if(hitX && hitY){
-           spotsX[shotX] = -1;
-           spotsY[shotY] = -1;
-           isAHit = true;
-       }
-       else{isAHit = false;}
-   }
+    public void hit(int pos) throws IllegalArgumentException{
+        if(pos != (int)pos){
+            throw new IllegalArgumentException("Input coordinates must be integers");
+        }
+    // the value of the position on the boat that is hit. Ie: 1st, 2nd, 3rd
+        boolean shot = false;
+        for(int i = 0; i < spots.length; i++){
+            if (pos == spots[i]) { spots[i] = -1; shot = true; }
+        }
+        isAHit = shot;
+    }
    public boolean isSunk(){
-       for(int i: spotsX){
-           if(i != -1){
-               return false;
-           }
-       }
-       for(int i: spotsY){ //redundant but safe approach
+       for(int i: spots){
            if(i != -1){
                return false;
            }

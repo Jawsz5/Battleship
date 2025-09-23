@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 import gamefiles.Game;
 
 public class Main {
@@ -10,7 +12,8 @@ public class Main {
   int avgturns = 0;
   int maxturns = 0;
   int hundreds = 0;
-  for(int i = 0; i < 10000; i++){
+  byte[] games = new byte[100000];
+  for(int i = 0; i < 100000; i++){
     try{
       int totalTurns = 0;
       Game g = new Game(10, 100);
@@ -18,14 +21,18 @@ public class Main {
       totalTurns += g.getTurnsPlayed();
       if(totalTurns < minturns){minturns = totalTurns;}
       if(totalTurns > maxturns){maxturns = totalTurns;}
+      games[i] = (byte) g.getTurnsPlayed();
       avgturns += totalTurns;
       if(totalTurns == 100){hundreds++;}
     }catch(Exception e){e.printStackTrace();}
   }
-  System.out.println(avgturns/10000);
-  System.out.println(minturns);
-  System.out.println(maxturns);
-  System.out.println(hundreds);
+  Arrays.sort(games);
+  int median = games[games.length/2];
+  System.out.println("Median: " + median);
+  System.out.println("Mean: " + avgturns/100000);
+  System.out.println("Minimum: " + minturns);
+  System.out.println("Maximum: " + maxturns);
+  System.out.println("# of 100 turn games: " + hundreds);
 
 
     /* 

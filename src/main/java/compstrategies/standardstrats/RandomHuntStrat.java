@@ -24,11 +24,8 @@ public class RandomHuntStrat extends RandomStrat {
         remainingShipLengths.add(2);
     }
 
-    private int flatten(int x, int y) { return dim * x + y; }
-
     @Override
-    public void trackShot(boolean hit, int sunkLen, int x, int y, int[] sunkCells) {
-        int pos = flatten(x, y);
+    public void trackShot(boolean hit, int sunkLen, int pos, int[] sunkCells) {
         hitMap[pos] = (byte) (hit ? 2 : 1);
 
         if (hit) {
@@ -49,7 +46,7 @@ public class RandomHuntStrat extends RandomStrat {
     }
 
     @Override
-    public int[] selectShot() {
+    public int selectShot() {
         int shot = -1;
 
         // Hunt mode first
@@ -60,7 +57,7 @@ public class RandomHuntStrat extends RandomStrat {
                     if (shot >= 0 && shot < hitMap.length && hitMap[shot] == 0) {
                         hitMap[shot] = 1;
                         notShotAtSpots.remove(Integer.valueOf(shot));
-                        return new int[]{shot / dim, shot % dim};
+                        return shot;
                     }
                 }
             } catch (Exception e) {
@@ -94,7 +91,7 @@ public class RandomHuntStrat extends RandomStrat {
         notShotAtSpots.remove(Integer.valueOf(shot));
         hitMap[shot] = 1;
 
-        return new int[]{shot / dim, shot % dim};
+        return shot;
     }
 }
 

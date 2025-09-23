@@ -30,13 +30,11 @@ public class Parity extends RandomStrat {
         huntSquares = new ArrayList<>();
         for (int x = 0; x < dim; x++) {
             for (int y = 0; y < dim; y++) {
-                if ((x + y) % 2 == 0) huntSquares.add(flatten(x, y));
+                if ((x + y) % 2 == 0) huntSquares.add(10*x+y);
             }
         }
         Collections.shuffle(huntSquares);
     }
-
-    private int flatten(int x, int y) { return dim * x + y; }
 
     private boolean canFitShip(int pos) {
         int row = pos / dim;
@@ -48,8 +46,7 @@ public class Parity extends RandomStrat {
     }
 
     @Override
-    public void trackShot(boolean hit, int sunkLen, int x, int y, int[] sunkCells) {
-        int pos = flatten(x, y);
+    public void trackShot(boolean hit, int sunkLen, int pos, int[] sunkCells) {
         hitMap[pos] = (byte) (hit ? 2 : 1);
 
         if (hit) {
@@ -70,7 +67,7 @@ public class Parity extends RandomStrat {
     }
 
     @Override
-    public int[] selectShot() {
+    public int selectShot() {
         int shot = -1;
 
         // Hunt mode first
@@ -81,7 +78,7 @@ public class Parity extends RandomStrat {
                     if (shot >= 0 && shot < hitMap.length && hitMap[shot] == 0) {
                         hitMap[shot] = 1; // mark as attempted
                         huntSquares.remove(Integer.valueOf(shot));
-                        return new int[]{shot / dim, shot % dim};
+                        return shot;
                     }
                 }
             } catch (Exception e) {
@@ -106,6 +103,6 @@ public class Parity extends RandomStrat {
         huntSquares.remove(Integer.valueOf(shot));
         hitMap[shot] = 1;
 
-        return new int[]{shot / dim, shot % dim};
+        return shot;
     }
 }

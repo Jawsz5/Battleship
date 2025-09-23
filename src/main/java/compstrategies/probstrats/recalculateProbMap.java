@@ -21,17 +21,14 @@ public final class recalculateProbMap {
         recompute();
     }
 
-    public void trackShot(boolean hit, int sunkLen, int x, int y, int[] sunkCells) {
-        int id = flatten(x, y);
-        hitMap[id] = hit ? (byte)2 : (byte)1;
-
+    public void trackShot(boolean hit, int sunkLen, int pos, int[] sunkCells) {
+        hitMap[pos] = hit ? (byte)2 : (byte)1;
         if (hit) {
             if (h == null) {
-                h = new Hunt(id, dim); // start Hunt mode
+                h = new Hunt(pos, dim); // start Hunt mode
             }
-            h.registerHit(id, hitMap);
+            h.registerHit(pos, hitMap);
         }
-
         if (hit && sunkLen > 1 && sunkLen < 6 && remain[sunkLen] > 0 && sunkCells != null) {
             remain[sunkLen]--;
             int limit = Math.min(sunkLen, sunkCells.length);
@@ -47,7 +44,7 @@ public final class recalculateProbMap {
         }
     }
 
-    public int[] selectShot() {
+    public int selectShot() {
         int shot = -1;
 
         // Hunt mode first
@@ -57,7 +54,7 @@ public final class recalculateProbMap {
                     shot = h.huntShip(hitMap);
                     if (shot >= 0 && shot < hitMap.length && hitMap[shot] == 0) {
                         hitMap[shot] = 1; // mark as attempted
-                        return new int[]{shot / dim, shot % dim};
+                        return shot;
                     }
                 }
             } catch (Exception e) {
@@ -74,8 +71,7 @@ public final class recalculateProbMap {
             if (s > bestScore) { bestScore = s; bestId = id; }
         }
         if (bestId < 0) throw new IllegalStateException("No cells left to fire at");
-        hitMap[bestId] = 1; // mark as attempted
-        return new int[]{ bestId / dim, bestId % dim }; // (row, col)
+        return bestId; // (row, col)
     }
 
     private void recompute() {

@@ -15,15 +15,13 @@ public class RandomStrat {
             notShotAtSpots.add(i);
         }
     }
-    public int[] selectShot() {
+    public int selectShot() {
         if (notShotAtSpots.isEmpty()) throw new IllegalStateException("No squares left");
         int idx = ThreadLocalRandom.current().nextInt(notShotAtSpots.size());
         int spot = notShotAtSpots.remove(idx);                              
-        int x = spot / dim;
-        int y = spot % dim;
-        return new int[]{x, y};
+        return spot;
     }
     //filler method to maintain consistency with other strats for the game loop
-    public void trackShot(boolean hit, int sunkLen, int x, int y, int[] sunkCells){}
+    public void trackShot(boolean hit, int sunkLen, int pos, int[] sunkCells){}
     
 }

@@ -38,27 +38,23 @@ public class Game{
        playerOcean.placeRandomBoats();
        boats = playerOcean.getBoats();
    }
-   private void shoot(int x, int y) throws IllegalArgumentException{
-       if(x < 0 || x >= playerOcean.getDimension()){
+   private void shoot(int pos) throws IllegalArgumentException{
+       if(pos < 0 || pos >= nCells){ 
            throw new IllegalArgumentException("X-coordinate is out of bounds");
        }
-       if(y < 0 || y >= playerOcean.getDimension()){
-           throw new IllegalArgumentException("Y-coordinate is out of bounds");
-       }
-       if(hitMap[dimension*x+y] != '0'){
+       if(hitMap[pos] != '0'){
            throw new IllegalArgumentException("Spot has already been shot at");
        }
-       if(playerOcean.getGrid()[dimension*x + y] != 'e'){
-           hitMap[dimension*x+y] = 'X';
+       if(playerOcean.getGrid()[pos] != 'e'){
+           hitMap[pos] = 'X';
            for(Ship s: boats){
-               for(int i = 0; i < s.getSpotsX().length; i++){
-                   if(s.getSpotsX()[i] == x && s.getSpotsY()[i] == y){
-                       s.getSpotsX()[i] = -1;
-                       s.getSpotsY()[i] = -1;
+               for(int i = 0; i < s.getSpots().length; i++){
+                   if(s.getSpots()[i] == pos){
+                       s.getSpots()[i] = -1;
                    }
                }
            }
-       } else{hitMap[dimension*x+y] = 'O';}
+       } else{hitMap[pos] = 'O';}
    }
    public void playGameOnTerminal_Human(){
        Scanner shotInput = new Scanner(System.in);
@@ -103,7 +99,7 @@ public class Game{
                    xShot = shotInput.nextInt();
                    System.out.print("enter a y coordinate to shoot: ");
                    yShot = shotInput.nextInt();
-                   shoot(xShot, yShot);
+                   shoot(xShot*dimension + yShot);
                    isShotFired = true;
                }catch(IllegalArgumentException e){System.out.println(e);}
            }while(!isShotFired);
@@ -113,17 +109,16 @@ public class Game{
        shotInput.close();
    }
     public void playGameComputer() throws IOException{
-        RandomStrat k = new RandomStrat(dimension);
-        ProbabilityMapStrat l = new ProbabilityMapStrat(dimension);
-        recalculateProbMap r = new recalculateProbMap(dimension);
-        RandomHuntStrat m = new RandomHuntStrat(dimension);
-        Parity n = new Parity(dimension);
+        //RandomStrat r = new RandomStrat(dimension);
+        //ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
+        //recalculateProbMap r = new recalculateProbMap(dimension);
+        //RandomHuntStrat r = new RandomHuntStrat(dimension);
+        //Parity r = new Parity(dimension);
         for(int i = 0; i < dimension*dimension + 1; i++){
             if(playerOcean.isAllSunk()){gameWon = true;break;}
             turnsPlayed += 1;
-            int[] shot = new int[2];
-            shot = r.selectShot();
-            shoot(shot[0], shot[1]);
+            int shot = r.selectShot();
+            shoot(shot);
             int sunkBoatLength = 0;
             int[] sunkCells = null;
             for (int s = 0; s < boats.size(); s++) {
@@ -131,20 +126,28 @@ public class Game{
                     sunkBoatLength = boats.get(s).getBoatLength();
                     sunkBoatIDX[s] = 0;
 
-                    int[] sx = boats.get(s).getSaveSpotsX();
-                    int[] sy = boats.get(s).getSaveSpotsY();
+                    // immutable 1-D indices for this boat
+                    int[] saved = boats.get(s).getSaveSpots();
 
-                    int cnt = 0;
-                    for (int z = 0; z < sx.length; z++) if (sx[z] >= 0 && sy[z] >= 0) cnt++;
-                    sunkCells = new int[cnt];
-                    int idx = 0;
-                    for (int z = 0; z < sx.length; z++) {
-                        if (sx[z] >= 0 && sy[z] >= 0) sunkCells[idx++] = sx[z] * dimension + sy[z];
+                    // keep only valid cell ids
+                    if (saved != null) {
+                        int cnt = 0;
+                        for (int id : saved) if (id >= 0 && id < nCells) cnt++;
+
+                        if (cnt > 0) {
+                            sunkCells = new int[cnt];
+                            int idx = 0;
+                            for (int id : saved) {
+                                if (id >= 0 && id < nCells) sunkCells[idx++] = id;
+                            }
+                        } else {
+                            sunkCells = null; // nothing valid (shouldn't happen)
+                        }
                     }
                     break; // only one new sink per shot
                 }
             }
-            r.trackShot(playerOcean.isHit(shot[0], shot[1]), sunkBoatLength, shot[0], shot[1], sunkCells);
+            r.trackShot(playerOcean.isHit(shot), sunkBoatLength, shot, sunkCells);
             /* 
             r.printProb();
             System.out.println("\n\n");

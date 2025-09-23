@@ -95,14 +95,13 @@ public class ProbabilityMapStrat {
 
     private final java.util.BitSet fired = new java.util.BitSet(); // cells already shot
 
-    public void trackShot(boolean hit, int sunkLen, int x, int y, int[] sunkCells) {
+    public void trackShot(boolean hit, int sunkLen, int pos, int[] sunkCells) {
         //System.out.println(hit + " " + sunkLen + "  " + x+","+y);
-        int cell = flaten(x, y);
-        fired.set(cell); // never pick this cell again
+        fired.set(pos); // never pick this cell again
 
         // MISS: kill all candidates that cover (x,y)
         if (hit == false) {
-            int start = cellStart[cell], end = cellStart[cell + 1];
+            int start = cellStart[pos], end = cellStart[pos + 1];
             for (int i = start; i < end; i++) {
                 int cid = cellIDs[i] & 0xFFFF;
                 alive.clear(cid);
@@ -137,7 +136,7 @@ public class ProbabilityMapStrat {
     }
 
     // choose the best shot (x,y) based on current alive counts; skip fired cells
-    public int[] selectShot() {
+    public int selectShot() {
         int bestCell = -1, bestScore = Integer.MIN_VALUE;
         for (int cell = 0; cell < nCells; cell++) {
             if (fired.get(cell)) continue;       
@@ -157,9 +156,8 @@ public class ProbabilityMapStrat {
         //System.out.println("\n\n\n\n");
         
         // invert flaten(x,y) = y*dim + x; for future reference, x and y are flipped in this project as y is column, x is row
-        int x = bestCell % dim;
-        int y = bestCell / dim;
-        return new int[]{x, y};
+
+        return bestCell;
     }
 
 
