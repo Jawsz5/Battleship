@@ -2,12 +2,12 @@ package compstrategies.probstrats;
 
 import compstrategies.Hunt;
 
-public final class recalculateProbMap {
-    private final int dim, nCells;
-    private final int[] prob;
-    private final byte[] hitMap;   // 0=unknown, 1=miss, 2=hit, 3 for sunk
-    private final int[] remain = new int[6]; // remaining ship lengths
-    private Hunt h;                 // Hunt mode object
+public class recalculateProbMap {
+    protected final int dim, nCells;
+    protected final int[] prob;
+    protected final byte[] hitMap;   // 0=unknown, 1=miss, 2=hit, 3 for sunk
+    protected final int[] remain = new int[6]; // remaining ship lengths
+    protected Hunt h;                 // Hunt mode object
 
     public recalculateProbMap(int dimension) {
         this.dim = dimension;
@@ -74,7 +74,7 @@ public final class recalculateProbMap {
         return bestId; // (row, col)
     }
 
-    private void recompute() {
+    protected void recompute() {
         java.util.Arrays.fill(prob, 0);
 
         for (int L = 2; L <= 5; L++) {
