@@ -24,39 +24,39 @@ public class Ocean{
            }
        }
    }
-   public void addBoats(int pos, Boolean direction, String size) throws Exception {
-    Ship s = new Ship(pos, direction, size);
-    int[] boatSpot = s.getSpots();
-    int boatLength = boatSpot.length;
-    if (boatLength == 0) throw new IllegalArgumentException("Boat has length 0");
-    // check every cell is on-board
-    int nCells = dimension * dimension;
+    public void addBoats(int pos, Boolean direction, String size) throws Exception {
+        Ship s = new Ship(pos, direction, size);
+        int[] boatSpot = s.getSpots();
+        int boatLength = boatSpot.length;
+        if (boatLength == 0) throw new IllegalArgumentException("Boat has length 0");
+        // check every cell is on-board
+        int nCells = dimension * dimension;
 
-    // bounds using start cell + direction
-    int startRow = pos / dimension;
-    int startCol = pos % dimension;
-    if (Boolean.TRUE.equals(direction)) {
-        if (startRow + boatLength > dimension)
-            throw new IllegalArgumentException("Boat is out of bounds (vertical).");
-    } else {
-        if (startCol + boatLength > dimension)
-            throw new IllegalArgumentException("Boat is out of bounds (horizontal wrap).");
-    }
+        // bounds using start cell + direction
+        int startRow = pos / dimension;
+        int startCol = pos % dimension;
+        if (Boolean.TRUE.equals(direction)) {
+            if (startRow + boatLength > dimension)
+                throw new IllegalArgumentException("Boat is out of bounds (vertical).");
+            } else {
+                if (startCol + boatLength > dimension)
+                    throw new IllegalArgumentException("Boat is out of bounds (horizontal wrap).");
+        }
 
-    // every cell must be on-board and not overlap
-    for (int id : boatSpot) {
-        if (id < 0 || id >= nCells)
-            throw new IllegalArgumentException("Boat is out of bounds.");
-        if (grid[id] != 'e')
-            throw new IllegalArgumentException("Boat overlaps with another boat");
-    }
-    // place the boat using flat ids
-    for (int i = 0; i < boatLength; i++) {
-        grid[boatSpot[i]] = s.getBoatType();
-    }
+        // every cell must be on-board and not overlap
+        for (int id : boatSpot) {
+            if (id < 0 || id >= nCells)
+                throw new IllegalArgumentException("Boat is out of bounds.");
+            if (grid[id] != 'e')
+                throw new IllegalArgumentException("Boat overlaps with another boat");
+        }
+        // place the boat using flat ids
+        for (int i = 0; i < boatLength; i++) {
+            grid[boatSpot[i]] = s.getBoatType();
+        }
 
-    Boats.add(s);
-}
+        Boats.add(s);
+    }
 
    
    public void placeBoatsManual(){

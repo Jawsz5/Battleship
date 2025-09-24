@@ -2,9 +2,9 @@ package compstrategies.probstrats;
 
 import java.util.*;
 
-public class finalProbMap extends recalculateProbMap {
+public class FinalProbMap extends recalculateProbMap {
 
-    public finalProbMap(int dimension) {
+    public FinalProbMap(int dimension) {
         super(dimension);
     }
 
@@ -78,5 +78,3 @@ public class finalProbMap extends recalculateProbMap {
         return row * dim + col;
     }
 }
-
-    
