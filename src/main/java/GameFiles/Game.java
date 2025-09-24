@@ -5,10 +5,10 @@ import java.util.Scanner;
 import compstrategies.Parity;
 import compstrategies.probstrats.EfficiencyExpProb;
 import compstrategies.probstrats.Prob;
+import compstrategies.probstrats.ArgMaxProb.BoostedNoHuntProb;
+import compstrategies.probstrats.ArgMaxProb.BoostedProb;
 import compstrategies.standardstrats.RandomHuntStrat;
 import compstrategies.standardstrats.RandomStrat;
-import compstrategies.probstrats.BoostedProb;
-import compstrategies.probstrats.BoostedNoHuntProb;
 
 import java.io.IOException;
 import java.util.ArrayList;

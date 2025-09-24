@@ -1,6 +1,8 @@
-package compstrategies.probstrats;
+package compstrategies.probstrats.ArgMaxProb;
 
 import java.util.Arrays;
+
+import compstrategies.probstrats.Prob;
 
 public class BoostedNoHuntProb extends Prob {
 
@@ -102,7 +104,8 @@ public class BoostedNoHuntProb extends Prob {
             }
         }
 
-        // adjacency bonuses around unsunk hits (Python-like heuristic)
+        // adjacency bonuses around unsunk hits
+        // for larger board sizes, award larger bonuses
         final int ADJ = 10;   // neighbor of a hit
         final int LINE = 15;  // extends a line of hits
 
@@ -116,10 +119,24 @@ public class BoostedNoHuntProb extends Prob {
             boost(r, c - 1, ADJ);
 
             // line-extension
-            if (in(r - 1, c) && hitMap[(r - 1) * dim + c] == 2) boost(r + 1, c, LINE);
-            if (in(r + 1, c) && hitMap[(r + 1) * dim + c] == 2) boost(r - 1, c, LINE);
-            if (in(r, c - 1) && hitMap[r * dim + (c - 1)] == 2) boost(r, c + 1, LINE);
-            if (in(r, c + 1) && hitMap[r * dim + (c + 1)] == 2) boost(r, c - 1, LINE);
+            
+            if (in(r - 1, c) && hitMap[(r - 1) * dim + c] == 2) {
+                boost(r + 1, c, LINE);
+                if (in(r - 2, c) && hitMap[(r - 2) * dim + c] == 2) boost(r + 2, c, LINE*2);
+            }
+            if (in(r + 1, c) && hitMap[(r + 1) * dim + c] == 2){
+                boost(r - 1, c, LINE);
+                if (in(r + 2, c) && hitMap[(r + 2) * dim + c] == 2) boost(r - 2, c, LINE*2);
+            } 
+            if (in(r, c - 1) && hitMap[r * dim + (c - 1)] == 2){
+                boost(r, c + 1, LINE);
+                if (in(r, c - 2) && hitMap[r * dim + (c - 2)] == 2) boost(r, c + 2, LINE*2);
+                
+            }
+            if (in(r, c + 1) && hitMap[r * dim + (c + 1)] == 2){
+                boost(r, c - 1, LINE);
+                if (in(r, c + 2) && hitMap[r * dim + (c + 2)] == 2) boost(r, c - 2, LINE*2);
+            }
         }
     }
 

@@ -1,6 +1,8 @@
-package compstrategies.probstrats;
+package compstrategies.probstrats.ArgMaxProb;
 
 import java.util.*;
+
+import compstrategies.probstrats.Prob;
 
 public class BoostedProb extends Prob {
 
