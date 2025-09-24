@@ -2,9 +2,9 @@ package compstrategies.probstrats;
 
 import java.util.*;
 
-public class FinalProbMap extends recalculateProbMap {
+public class BoostedProb extends Prob {
 
-    public FinalProbMap(int dimension) {
+    public BoostedProb(int dimension) {
         super(dimension);
     }
 

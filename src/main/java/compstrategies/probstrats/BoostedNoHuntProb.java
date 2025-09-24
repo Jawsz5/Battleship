@@ -2,21 +2,21 @@ package compstrategies.probstrats;
 
 import java.util.Arrays;
 
-public class TrickyProbMap extends recalculateProbMap {
+public class BoostedNoHuntProb extends Prob {
 
-    public TrickyProbMap(int dimension){
+    public BoostedNoHuntProb(int dimension){
         super(dimension);
     }
 
-    // ---- Hunt-free selectShot: recompute → pick argmax(prob) among unknown cells.
-    //      Do NOT pre-mark the guess in hitMap; let trackShot() update after result.
+    // Hunt-free selectShot: recompute -> pick argmax(prob) among unknown cells.
+    // Do NOT pre-mark the guess in hitMap; let trackShot() update after result.
     @Override
     public int selectShot() {
         recompute();
 
         int bestId = -1, bestScore = Integer.MIN_VALUE;
 
-        // optional tiny tiebreaker: prefer cells adjacent to hits (keeps runs tight)
+        // tiny tiebreaker: prefer cells adjacent to hits (keeps runs tight)
         for (int id = 0; id < nCells; id++) {
             if (hitMap[id] != 0) continue; // only unknown cells
             int s = prob[id];
@@ -40,7 +40,7 @@ public class TrickyProbMap extends recalculateProbMap {
                (c+1 < dim     && hitMap[r*dim + (c+1)] == 2);
     }
 
-    // ---- Hunt-free tracking: no Hunt object, same sunk bookkeeping.
+    // Hunt-free tracking: no Hunt object, same sunk ship tracking.
     @Override
     public void trackShot(boolean hit, int sunkLen, int pos, int[] sunkCells) {
         hitMap[pos] = hit ? (byte)2 : (byte)1;
@@ -56,7 +56,7 @@ public class TrickyProbMap extends recalculateProbMap {
         }
     }
 
-    // ---- Probabilities: base placements + Python-style adjacency/line bonuses.
+    // Probabilities: base placements + adjacency/line bonuses.
     @Override
     protected void recompute() {
         Arrays.fill(prob, 0);

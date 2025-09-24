@@ -3,12 +3,12 @@ package gamefiles;
 import java.util.Scanner;
 
 import compstrategies.Parity;
-import compstrategies.probstrats.ProbabilityMapStrat;
-import compstrategies.probstrats.recalculateProbMap;
+import compstrategies.probstrats.EfficiencyExpProb;
+import compstrategies.probstrats.Prob;
 import compstrategies.standardstrats.RandomHuntStrat;
 import compstrategies.standardstrats.RandomStrat;
-import compstrategies.probstrats.FinalProbMap;
-import compstrategies.probstrats.TrickyProbMap;
+import compstrategies.probstrats.BoostedProb;
+import compstrategies.probstrats.BoostedNoHuntProb;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -117,7 +117,7 @@ public class Game{
         //RandomHuntStrat r = new RandomHuntStrat(dimension);
         //Parity r = new Parity(dimension);
         //FinalProbMap r = new FinalProbMap(dimension);
-        TrickyProbMap r = new TrickyProbMap(dimension);
+        BoostedNoHuntProb r = new BoostedNoHuntProb(dimension);
         for(int i = 0; i < dimension*dimension + 1; i++){
             if(playerOcean.isAllSunk()){gameWon = true;break;}
             turnsPlayed += 1;

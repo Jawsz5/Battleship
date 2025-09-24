@@ -37,17 +37,5 @@ import gamefiles.Game;
     System.out.println("Minimum: " + minturns);
     System.out.println("Maximum: " + maxturns);
     System.out.println("# of 100 turn games: " + hundreds);
-
-
-    /* 
-    try{
-    int totalTurns = 0;
-    Game g = new Game(10, 100);
-    g.playGameComputer();
-    totalTurns += g.getTurnsPlayed();
-    System.out.println(totalTurns);
-    }catch(Exception e){e.printStackTrace();}
-    */
-
   }
 }

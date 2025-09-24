@@ -2,14 +2,14 @@ package compstrategies.probstrats;
 
 import compstrategies.Hunt;
 
-public class recalculateProbMap {
+public class Prob {
     protected final int dim, nCells;
     protected final int[] prob;
     protected final byte[] hitMap;   // 0=unknown, 1=miss, 2=hit, 3 for sunk
     protected final int[] remain = new int[6]; // remaining ship lengths
     protected Hunt h;                 // Hunt mode object
 
-    public recalculateProbMap(int dimension) {
+    public Prob(int dimension) {
         this.dim = dimension;
         this.nCells = dim * dim;
         this.prob = new int[nCells];

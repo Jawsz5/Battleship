@@ -1,8 +1,8 @@
 package compstrategies.probstrats;
 
 
-//much faster version of the probability map strategy
-public class ProbabilityMapStrat {
+//experimenting to speed up the probability map
+public class EfficiencyExpProb {
     private final int nCells, dim, nCandidates;
     //cell start stores the starting index of each cell in the ship id list. Cell length, stores number of ships per cell
     private int cellStart[], cellLength[], shipTypeStart[];
@@ -10,7 +10,7 @@ public class ProbabilityMapStrat {
     private byte[] candLength; //candidate length
     private short[] candCellsOcc; //candidate cells occupied
     private java.util.BitSet alive;
-    public ProbabilityMapStrat(int dimension){
+    public EfficiencyExpProb(int dimension){
         dim = dimension; nCells = dim*dim;
         int[] shipSizes = (dim == 3) ? new int[]{3, 3, 2}: new int[]{5,4,3,3,2};
         int maxShipSize = shipSizes[0]; //largest ship size is the 0th element
