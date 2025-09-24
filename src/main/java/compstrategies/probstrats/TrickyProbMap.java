@@ -25,7 +25,7 @@ public class TrickyProbMap extends recalculateProbMap {
                     for (int k = 0; k < L; k++) {
                         int id = base + k;
                         byte h = hitMap[id];
-                        if (h == 1 || h == 3) { // miss or sunk blocks
+                        if (h != 0) { // miss or sunk blocks
                             blocked = true; break;
                         }
                     }
@@ -45,7 +45,7 @@ public class TrickyProbMap extends recalculateProbMap {
                     for (int k = 0; k < L; k++) {
                         int id = base + k * dim;
                         byte h = hitMap[id];
-                        if (h == 1 || h == 3) { blocked = true; break; }
+                        if (h != 0) { blocked = true; break; }
                     }
                     if (blocked) continue;
                     for (int k = 0; k < L; k++) {
@@ -85,10 +85,5 @@ public class TrickyProbMap extends recalculateProbMap {
         if (!in(r, c)) return;
         int id = r * dim + c;
         if (hitMap[id] == 0) prob[id] += val;  // never add to already-hit/miss/sunk
-    }
-
-
-    private int flatten(int row, int col) {
-        return row * dim + col;
     }
 }
