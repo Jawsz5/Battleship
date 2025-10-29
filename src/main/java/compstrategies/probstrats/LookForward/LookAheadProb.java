@@ -1,4 +1,4 @@
-package compstrategies.probstrats.MinimizeProb;
+package compstrategies.probstrats.LookForward;
 
 public class LookAheadProb extends HitMissProb{
     LookAheadProb(int dimension){

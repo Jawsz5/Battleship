@@ -1,10 +1,10 @@
-package compstrategies.probstrats.ArgMaxProb;
+package compstrategies.probstrats.HitMaxOptimize;
 
 import java.util.Arrays;
 
-import compstrategies.probstrats.Prob;
+import compstrategies.probstrats.ShipMaxProb;
 
-public class BoostedNoHuntProb extends Prob {
+public class BoostedNoHuntProb extends ShipMaxProb {
 
     public BoostedNoHuntProb(int dimension){
         super(dimension);
@@ -26,7 +26,7 @@ public class BoostedNoHuntProb extends Prob {
                 bestScore = s;
                 bestId = id;
             } else if (s == bestScore && bestId != -1) {
-                // tiebreak: prefer adjacency to a hit (like the Python feel)
+                // tiebreak: prefer adjacency to a hit
                 if (adjacentToHit(id) && !adjacentToHit(bestId)) bestId = id;
             }
         }

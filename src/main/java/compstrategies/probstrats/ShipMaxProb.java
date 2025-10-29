@@ -2,14 +2,14 @@ package compstrategies.probstrats;
 
 import compstrategies.Hunt;
 
-public class Prob {
+public class ShipMaxProb {
     protected final int dim, nCells;
     protected final int[] prob;
     protected final byte[] hitMap;   // 0=unknown, 1=miss, 2=hit, 3 for sunk
     protected final int[] remain = new int[6]; // remaining ship lengths
     protected Hunt h;                 // Hunt mode object
 
-    public Prob(int dimension) {
+    public ShipMaxProb(int dimension) {
         this.dim = dimension;
         this.nCells = dim * dim;
         this.prob = new int[nCells];
@@ -84,6 +84,7 @@ public class Prob {
             // vertical placements
             for (int y = 0; y < dim; y++) {
                 for (int x = 0; x <= dim - L; x++) {
+                    //utilizes a 2-D to 1-D conversion as looping in 2-D saves condtional checks
                     int base = flatten(x,y);
                     boolean blocked = false;
                     for (int p = base, k = 0; k < L; k++, p += dim) {

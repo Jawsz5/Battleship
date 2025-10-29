@@ -3,11 +3,9 @@ package gamefiles;
 import java.util.Scanner;
 
 import compstrategies.Parity;
-import compstrategies.probstrats.EfficiencyExpProb;
-import compstrategies.probstrats.Prob;
-import compstrategies.probstrats.ArgMaxProb.BoostedNoHuntProb;
-import compstrategies.probstrats.ArgMaxProb.BoostedProb;
-import compstrategies.standardstrats.RandomHuntStrat;
+import compstrategies.probstrats.ShipMaxProb;
+import compstrategies.probstrats.HitMaxOptimize.BoostedNoHuntProb;
+import compstrategies.probstrats.LookForward.HitMissProb;
 import compstrategies.standardstrats.RandomStrat;
 
 import java.io.IOException;
@@ -116,9 +114,10 @@ public class Game{
         //recalculateProbMap r = new recalculateProbMap(dimension);
         //RandomHuntStrat r = new RandomHuntStrat(dimension);
         //Parity r = new Parity(dimension);
-        //FinalProbMap r = new FinalProbMap(dimension);
-        BoostedNoHuntProb r = new BoostedNoHuntProb(dimension);
-        for(int i = 0; i < dimension*dimension + 1; i++){
+        ShipMaxProb r = new ShipMaxProb(dimension);
+        //BoostedNoHuntProb r = new BoostedNoHuntProb(dimension);
+        //HitMissProb r = new HitMissProb(dimension);
+        for(int i = 0; i <= dimension*dimension; i++){
             if(playerOcean.isAllSunk()){gameWon = true;break;}
             turnsPlayed += 1;
             int shot = r.selectShot();
@@ -152,6 +151,7 @@ public class Game{
                 }
             }
             r.trackShot(playerOcean.isHit(shot), sunkBoatLength, shot, sunkCells);
+            if (gameWon) break;
             /* 
             r.printProb();
             System.out.println("\n\n");

@@ -1,10 +1,10 @@
-package compstrategies.probstrats.ArgMaxProb;
+package compstrategies.probstrats.HitMaxOptimize;
 
 import java.util.*;
 
-import compstrategies.probstrats.Prob;
+import compstrategies.probstrats.ShipMaxProb;
 
-public class BoostedProb extends Prob {
+public class BoostedProb extends ShipMaxProb {
 
     public BoostedProb(int dimension) {
         super(dimension);
