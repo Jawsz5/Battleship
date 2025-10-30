@@ -3,6 +3,7 @@ package gamefiles;
 import java.util.Scanner;
 
 import compstrategies.Parity;
+import compstrategies.probstrats.CellMaxProb;
 import compstrategies.probstrats.ShipMaxProb;
 import compstrategies.probstrats.HitMaxOptimize.BoostedNoHuntProb;
 import compstrategies.probstrats.LookForward.HitMissProb;
@@ -115,6 +116,7 @@ public class Game{
         //RandomHuntStrat r = new RandomHuntStrat(dimension);
         //Parity r = new Parity(dimension);
         ShipMaxProb r = new ShipMaxProb(dimension);
+        //CellMaxProb r = new CellMaxProb(dimension);
         //BoostedNoHuntProb r = new BoostedNoHuntProb(dimension);
         //HitMissProb r = new HitMissProb(dimension);
         for(int i = 0; i <= dimension*dimension; i++){

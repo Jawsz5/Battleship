@@ -13,8 +13,8 @@ import gamefiles.Game;
     int maxturns = 0;
     int hundreds = 0;
     int failed = 0;
-    byte[] games = new byte[10000];
-    for(int i = 0; i < 10000; i++){
+    byte[] games = new byte[1];
+    for(int i = 0; i < 1; i++){
       try{
         int totalTurns = 0;
         Game g = new Game(10, 100);
@@ -34,7 +34,7 @@ import gamefiles.Game;
       median /= 2;
     } else median = games[games.length/2];
     System.out.println("Median: " + median);
-    System.out.println("Mean: " + avgturns/10000);
+    System.out.println("Mean: " + avgturns/1);
     System.out.println("Minimum: " + minturns);
     System.out.println("Maximum: " + maxturns);
     System.out.println("# of 100 turn games: " + hundreds);

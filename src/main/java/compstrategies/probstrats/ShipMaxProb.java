@@ -16,7 +16,9 @@ public class ShipMaxProb {
         this.hitMap = new byte[nCells];
 
         int[] fleet = (dim == 3) ? new int[]{3,3,2} : new int[]{5,4,3,3,2};
-        for (int L : fleet) remain[L]++;  // e.g., remain[3] == 2
+        //adds 1 to the position in remain that equals the value of L
+        //Ex: remain[5] gets + 1, remain[3] gets + 2
+        for (int L : fleet) remain[L]++;
 
         recompute();
     }
@@ -122,7 +124,24 @@ public class ShipMaxProb {
         for (int x = 0; x < dim; x++) {
             int row = x * dim;
             for (int y = 0; y < dim; y++) {
-                System.out.printf("%3d", prob[row + y]);
+                System.out.printf("%5d", prob[row + y]);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public void printProbAsPercent(){
+        double totalSum = 0;
+        for(int i: prob){
+            totalSum += i;
+        }
+
+        for (int x = 0; x < dim; x++) {
+            int row = x * dim;
+            for (int y = 0; y < dim; y++) {
+                double val = (double)prob[row + y];
+                System.out.printf("%7.3f", val / totalSum);
             }
             System.out.println();
         }
