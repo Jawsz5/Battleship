@@ -1,13 +1,16 @@
 package gamefiles;
 
 import java.util.Scanner;
-
+import compstrategies.*;
 import compstrategies.Parity;
 import compstrategies.probstrats.CellMaxProb;
 import compstrategies.probstrats.ShipMaxProb;
 import compstrategies.probstrats.HitMaxOptimize.BoostedNoHuntProb;
+import compstrategies.probstrats.HitMaxOptimize.BoostedProb;
 import compstrategies.probstrats.LookForward.HitMissProb;
 import compstrategies.standardstrats.RandomStrat;
+import compstrategies.standardstrats.RandomHuntStrat;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -111,14 +114,13 @@ public class Game{
    }
     public void playGameComputer() throws IOException{
         //RandomStrat r = new RandomStrat(dimension);
-        //ProbabilityMapStrat r = new ProbabilityMapStrat(dimension);
-        //recalculateProbMap r = new recalculateProbMap(dimension);
-        //RandomHuntStrat r = new RandomHuntStrat(dimension);
-        //Parity r = new Parity(dimension);
-        ShipMaxProb r = new ShipMaxProb(dimension);
-        //CellMaxProb r = new CellMaxProb(dimension);
-        //BoostedNoHuntProb r = new BoostedNoHuntProb(dimension);
-        //HitMissProb r = new HitMissProb(dimension);
+        // RandomHuntStrat r = new RandomHuntStrat(dimension);
+        // Parity r = new Parity(dimension);
+        // ShipMaxProb r = new ShipMaxProb(dimension);
+        // CellMaxProb r = new CellMaxProb(dimension);
+        BoostedNoHuntProb r = new BoostedNoHuntProb(dimension);
+        // HitMissProb r = new HitMissProb(dimension);
+        // BoostedProb r = new BoostedProb(dimension);
         for(int i = 0; i <= dimension*dimension; i++){
             if(playerOcean.isAllSunk()){gameWon = true;break;}
             turnsPlayed += 1;
