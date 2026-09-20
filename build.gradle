@@ -6,7 +6,7 @@ plugins {
 repositories { mavenCentral() }
 
 application {
-  mainClass = 'Main'
+  mainClass = 'legacy.runner.Main'
 }
 
 dependencies {
@@ -16,10 +16,113 @@ dependencies {
   testRuntimeOnly  "org.junit.platform:junit-platform-launcher"
 }
 
-test { useJUnitPlatform() }
+test {
+  useJUnitPlatform()
+  jvmArgs '--add-modules=jdk.incubator.vector'
+}
+
+tasks.register('phase1Benchmark', JavaExec) {
+  group = 'benchmark'
+  description = 'Runs the single-thread Phase 1 legacy/optimized benchmark.'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'optimized.benchmark.Phase1Benchmark'
+  ['benchmark.warmupGames', 'benchmark.games', 'benchmark.trials'].each { key ->
+    if (System.getProperty(key) != null) systemProperty key, System.getProperty(key)
+  }
+}
+
+tasks.register('phase2Parity', JavaExec) {
+  group = 'verification'
+  description = 'Runs exact BoostedNoHunt shot parity over deterministic fleets.'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'optimized.probability.ProbabilityParityCampaign'
+  if (System.getProperty('phase2.parityFleets') != null) {
+    args System.getProperty('phase2.parityFleets')
+  }
+}
+
+tasks.register('phase2Benchmark', JavaExec) {
+  group = 'benchmark'
+  description = 'Runs the Phase 2 legacy/recompute/incremental probability benchmark.'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'optimized.probability.Phase2ProbabilityBenchmark'
+  ['phase2.warmupGames', 'phase2.trials', 'phase2.largeGames',
+   'phase2.millionGames', 'phase2.microOperations'].each { key ->
+    if (System.getProperty(key) != null) systemProperty key, System.getProperty(key)
+  }
+}
+
+tasks.register('phase3Parity', JavaExec) {
+  group = 'verification'
+  description = 'Runs exact Phase 3 bonus-graph shot parity over deterministic fleets.'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'optimized.probability.Phase3ParityCampaign'
+  if (System.getProperty('phase3.parityFleets') != null) {
+    args System.getProperty('phase3.parityFleets')
+  }
+}
+
+tasks.register('phase3Benchmark', JavaExec) {
+  group = 'benchmark'
+  description = 'Runs the Phase 3 A/B/C/D probability benchmark.'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'optimized.probability.Phase3ProbabilityBenchmark'
+  ['phase3.warmupGames', 'phase3.trials', 'phase3.largeGames', 'phase3.millionGames',
+   'phase3.microOperations', 'phase3.onlyD', 'phase3.profileGames'].each { key ->
+    if (System.getProperty(key) != null) systemProperty key, System.getProperty(key)
+  }
+}
+
+tasks.register('phase4Parity', JavaExec) {
+  group = 'verification'
+  description = 'Runs exact Phase 4 selector parity over deterministic fleets.'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'optimized.probability.Phase4ParityCampaign'
+  if (System.getProperty('phase4.parityFleets') != null) {
+    args System.getProperty('phase4.parityFleets')
+  }
+}
+
+tasks.register('phase4Benchmark', JavaExec) {
+  group = 'benchmark'
+  description = 'Runs the Phase 4 scan/bucket/tournament selection benchmark.'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'optimized.probability.Phase4ProbabilityBenchmark'
+  ['phase4.warmupGames', 'phase4.trials', 'phase4.largeGames', 'phase4.millionGames',
+   'phase4.microOperations', 'phase4.only', 'phase4.profileGames'].each { key ->
+    if (System.getProperty(key) != null) systemProperty key, System.getProperty(key)
+  }
+}
+
+tasks.register('phase5Benchmark', JavaExec) {
+  group = 'benchmark'
+  description = 'Runs fixed-worker independent-game Phase 5 scaling benchmarks.'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'optimized.probability.Phase5MulticoreBenchmark'
+  ['phase5.warmupGames', 'phase5.corpusGames', 'phase5.randomGames', 'phase5.trials',
+   'phase5.workers'].each { key ->
+    if (System.getProperty(key) != null) systemProperty key, System.getProperty(key)
+  }
+}
 
 
 java { 
     modularity.inferModulePath = false 
     toolchain {languageVersion = JavaLanguageVersion.of(23)}
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.compilerArgs += ['--add-modules', 'jdk.incubator.vector']
+}
+
+tasks.register('phase6Benchmark', JavaExec) {
+  group = 'benchmark'
+  description = 'Runs final SIMD and lane-refilling batch experiments.'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'optimized.probability.Phase6SimdBatchBenchmark'
+  jvmArgs '--add-modules=jdk.incubator.vector'
+  ['phase6.games', 'phase6.trials', 'phase6.widths', 'phase6.vectorOperations', 'phase6.singleWorker',
+   'phase6.parallelWorkers'].each { key ->
+    if (System.getProperty(key) != null) systemProperty key, System.getProperty(key)
+  }
 }
